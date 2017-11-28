@@ -1,0 +1,6 @@
+{
+  "name": "dash",
+  "devDependencies": {
+    "@types/lodash": "^4.14.85"
+  }
+}
