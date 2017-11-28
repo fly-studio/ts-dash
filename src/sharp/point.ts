@@ -33,7 +33,7 @@ namespace sharp {
 		/**
 		 * 设置值到目标
 		 * Copies the x and y properties from this Point to any given object.
-		 * @method Phaser.Point#copyTo
+		 * @method sharp.Point#copyTo
 		 * @param {any} dest - The object to copy to.
 		 * @return {object} The dest object.
 		 */
@@ -69,10 +69,10 @@ namespace sharp {
 
 		/**
 		 * Sets the `x` and `y` values of this Point object from a given polar coordinate.
-		 * @method Phaser.Point#setToPolar
+		 * @method sharp.Point#setToPolar
 		 * @param {number} azimuth The angular coordinate, in radians 弧度.
 		 * @param {number} radius 半径
-		 * @return {Phaser.Point} This Point object. Useful for chaining method calls.
+		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
 		public setToPolar(azimuth: number, radius: number = 1): Point
 		{
@@ -83,8 +83,8 @@ namespace sharp {
 		/**
 		 * 翻转点
 		 * Inverts the x and y values of this Point
-		 * @method Phaser.Point#invert
-		 * @return {Phaser.Point} This Point object.
+		 * @method sharp.Point#invert
+		 * @return {sharp.Point} This Point object.
 		 */
 		public invert(): Point
 		{
@@ -94,10 +94,10 @@ namespace sharp {
 		/**
 		 * 点减少
 		 * Sets the `x` and `y` values of this Point object from a given polar coordinate.
-		 * @method Phaser.Point#subtract
+		 * @method sharp.Point#subtract
 		 * @param {number} deltaX - The value to subtract from Point.x.
 		 * @param {number} deltaY - The value to subtract from Point.y.
-		 * @return {Phaser.Point} This Point object. Useful for chaining method calls.
+		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
 		public subtract(deltaX: number, deltaY: number): Point
 		{
@@ -110,10 +110,10 @@ namespace sharp {
 		/**
 		 * 点增加
 		 * Adds the given x and y values to this Point.
-		 * @method Phaser.Point#add
+		 * @method sharp.Point#add
 		 * @param {number} deltaX - The value to add to Point.x.
 		 * @param {number} deltaY - The value to add to Point.y.
-		 * @return {Phaser.Point} This Point object. Useful for chaining method calls.
+		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
 		public add(deltaX: number, deltaY: number): Point
 		{
@@ -126,10 +126,10 @@ namespace sharp {
 		/**
 		 * 点乘以
 		 * Multiplies Point.x and Point.y by the given x and y values. Sometimes known as `Scale`.
-		 * @method Phaser.Point#multiply
+		 * @method sharp.Point#multiply
 		 * @param deltaX - The value to multiply Point.x by.
 		 * @param deltaY - The value to multiply Point.x by.
-		 * @return {Phaser.Point} This Point object. Useful for chaining method calls.
+		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
 		public multiply(deltaX: number, deltaY: number): Point
 		{
@@ -142,10 +142,10 @@ namespace sharp {
 		/**
 		 * 点除以
 		 * Divides Point.x and Point.y by the given x and y values.
-		 * @method Phaser.Point#divide
+		 * @method sharp.Point#divide
 		 * @param deltaX - The value to divide Point.x by.
 		 * @param deltaY - The value to divide Point.x by.
-		 * @return {Phaser.Point} This Point object. Useful for chaining method calls.
+		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
 		public divide(deltaX: number, deltaY: number): Point
 		{
