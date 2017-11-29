@@ -55,6 +55,8 @@ namespace sharp {
 		 * @param {number} y - The vertical value of this point. If not given the x value will be used in its place.
 		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
+		public setTo(x: number, y?: number): Point;
+		public setTo(p: Point): Point;
 		public setTo(xOrPoint: number | Point, y?: number): Point
 		{
 			if (xOrPoint instanceof Point) {
@@ -62,7 +64,7 @@ namespace sharp {
 				this.y = xOrPoint.y;
 			} else {
 				this.x = xOrPoint;
-				this.y = y == null ? xOrPoint : y;
+				this.y = y == undefined ? xOrPoint : y;
 			}
 			return this;
 		}
@@ -340,7 +342,7 @@ namespace sharp {
 		* @param {number} magnitude - The desired magnitude of the resulting Point.
 		* @return {sharp.Point} This Point object.
 		*/
-		public setMagnitude(magnitude): Point
+		public setMagnitude(magnitude: number): Point
 		{
 			return this.normalize().multiply(magnitude, magnitude);
 		}

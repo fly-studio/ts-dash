@@ -97,7 +97,7 @@ namespace array
 				row = this.row(rowOrIndex);
 				col = this.col(rowOrIndex);
 			}
-			let indices: number[] = [].concat(this.rowIndices(row), this.colIndices(col));
+			let indices: number[] = (<number[]>[]).concat(this.rowIndices(row), this.colIndices(col));
 			return _.uniq(indices);
 		}
 

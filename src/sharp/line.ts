@@ -4,9 +4,11 @@ namespace sharp {
 		private start: Point;
 		private end: Point;
 
-		constructor(p1OrX1: Point | number = 0, p2OrY1: Point | number = 0, x2: number = 0, y2: number = 0)
+		constructor(p1: Point, p2: Point)
+		constructor(x1?: number, y1?: number, x2?: number, y2?: number);
+		constructor(x1: any = 0, y1: any = 0, x2: number = 0, y2: number = 0)
 		{
-			this.setTo(p1OrX1, p2OrY1, x2, y2);
+			this.setTo(x1, y1, x2, y2);
 		}
 
 		/**
@@ -158,10 +160,33 @@ namespace sharp {
 			return new Line(this.start, this.end);
 		}
 
-		public static create(p1OrX1: Point | number = 0, p2OrY1: Point | number = 0, x2: number = 0, y2: number = 0) {
-			return new Line(p1OrX1, p2OrY1, x2, y2);
+		public static create(p1: Point, p2:Point): Line;
+		public static create(x1?: number, y1?: number, x2?: number, y2?: number): Line;
+		public static create(x1: any = 0, y1: any = 0, x2: number = 0, y2: number = 0): Line
+		{
+			return new Line(x1, y1, x2, y2);
 		}
 
+		/**
+		* Sets the components of the Line to the specified values.
+		*
+		* @method Phaser.Line#setTo
+		* @param {sharp.Point} [p1=0] - The start coordinate of the line.
+		* @param {number} [p2=0] - The end coordinate of the line.
+		* @return {Phaser.Line} This line object
+		*/
+		public setTo(p1: Point, p2: Point): Line;
+		/**
+		* Sets the components of the Line to the specified values.
+		*
+		* @method Phaser.Line#setTo
+		* @param {number} x1 - The x coordinate of the start of the line.
+		* @param {number} y1 - The y coordinate of the start of the line.
+		* @param {number} x2 - The x coordinate of the end of the line.
+		* @param {number} y2 - The y coordinate of the end of the line.
+		* @return {Phaser.Line} This line object
+		*/
+		public setTo(x1: number, y1: number, x2: number, y2: number): Line;
 		public setTo(p1OrX1: Point | number, p2OrY1: Point | number, x2?: number, y2?: number): Line
 		{
 			let [p1, p2] = sharp.optional2Points(p1OrX1, p2OrY1, x2, y2);
@@ -371,7 +396,7 @@ namespace sharp {
 			let edgeIntersection: Point|boolean;
 			let sides: Line[] = rect.sides;
 			let closestDistance = Infinity;
-			let distance: number = null;
+			let distance: number|null = null;
 
 			sides.forEach(side => {
 				edgeIntersection = this.intersects(side, true);

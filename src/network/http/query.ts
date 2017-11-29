@@ -14,7 +14,7 @@ namespace http {
 				responseType: 'json',
 				xsrfHeaderName: 'X-CSRF-TOKEN',
 				xsrfCookieName: 'XSRF-TOKEN', // read from cookie
-				transformRequest: [function (data, headers) {
+				transformRequest: [(data, headers) => {
 					// Do whatever you want to transform the data
 					return data;
 				}],

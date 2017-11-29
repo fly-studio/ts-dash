@@ -447,9 +447,9 @@ namespace math {
 	 */
 	export function min(...args: number[]): number
 	{
-		let data: number[] = args, min: number, len: number;
+		let data: number[] = args, min: number = 0, len: number = data.length;
 
-		for (let i: number = 1, min: number = 0, len = data.length; i < len; i++) {
+		for (let i:number = 1; i < len; i++) {
 			if (data[i] < data[min]) {
 				min = i;
 			}
@@ -469,9 +469,9 @@ namespace math {
 	 */
 	export function max(...args: number[]): number
 	{
-		let data: number[] = args, max: number, len: number;
+		let data: number[] = args, max: number = 0, len: number = data.length;
 
-		for (let i: number = 1, max: number = 0, len = data.length; i < len; i++) {
+		for (let i: number = 1; i < len; i++) {
 			if (data[i] > data[max]) {
 				max = i;
 			}
@@ -489,9 +489,9 @@ namespace math {
 	 */
 	export function minProperty(property: string, ...args: Object[]): number
 	{
-		let data: Object[] = args, min: number, len: number;
+		let data: Object[] = args, min: number = 0, len: number = data.length;
 
-		for (let i = 1, min = 0, len = data.length; i < len; i++) {
+		for (let i = 1; i < len; i++) {
 			if (data[i][property] < data[min][property]) {
 				min = i;
 			}
@@ -507,11 +507,11 @@ namespace math {
 	 * @method math#maxProperty
 	 * @return {number} The largest value from those given.
 	 */
-	export function maxProperty(property, ...args: Object[]): number
+	export function maxProperty(property: string, ...args: Object[]): number
 	{
-		let data: Object[] = args, max: number, len: number;
+		let data: Object[] = args, max: number = 0, len: number = data.length;
 
-		for (let i = 1, max = 0, len = data.length; i < len; i++) {
+		for (let i = 1; i < len; i++) {
 			if (data[i][property] > data[max][property]) {
 				max = i;
 			}

@@ -185,7 +185,7 @@ namespace sharp {
 		let p1: Point, p2: Point;
 		if (p1OrX1 instanceof Point) {
 			p1 = p1OrX1;
-			p2 = (p2OrY1 as Point);
+			p2 = (p2OrY1! as Point);
 		} else {
 			p1 = new Point(p1OrX1, p2OrY1 as number);
 			p2 = new Point(x2, y2);
@@ -199,12 +199,24 @@ namespace sharp {
 
 	 * http://keisan.casio.com/exec/system/1223508685
 	 * @method sharp#distance
-	 * @param {Point|number} p1OrX1 点1 or x1
-	 * @param {Point|number} p2OrY1 点2 or y1
+	 * @param {Point} p1 点1
+	 * @param {Point} p2 点2
+	 * @return {number}         距离 The distance between the two sets of coordinates.
+	 */
+	export function distance(p1: Point, p2: Point): number;
+	/**
+	 * 计算两点之间的距离
+	 * Returns the euclidian distance between the two given set of coordinates.
+
+	 * http://keisan.casio.com/exec/system/1223508685
+	 * @method sharp#distance
+	 * @param {number} x1
+	 * @param {number} y1
 	 * @param {number} x2
 	 * @param {number} y2
 	 * @return {number}         距离 The distance between the two sets of coordinates.
 	 */
+	export function distance(x1: number, y1: number, x2: number, y2: number): number;
 	export function distance(p1OrX1: Point | number, p2OrY1: Point | number, x2?: number, y2?: number): number
 	{
 		let [p1, p2] = optional2Points(p1OrX1, p2OrY1, x2, y2);
@@ -216,12 +228,23 @@ namespace sharp {
 	 * coordinates (cuts out a square root operation before returning).
 	 *
 	 * @method math#distanceSq
+	 * @param {Point} p1
+	 * @param {Point} p2
+	 * @return {number} The distance squared between the two sets of coordinates.
+	 */
+	export function distanceSq(p1: Point, p2: Point): number;
+	/**
+	 * Returns the euclidean distance squared between the two given set of
+	 * coordinates (cuts out a square root operation before returning).
+	 *
+	 * @method math#distanceSq
 	 * @param {number} x1
 	 * @param {number} y1
 	 * @param {number} x2
 	 * @param {number} y2
 	 * @return {number} The distance squared between the two sets of coordinates.
 	 */
+	export function distanceSq(x1: number, y1: number, x2: number, y2: number): number;
 	export function distanceSq(p1OrX1: Point | number, p2OrY1: Point | number, x2?: number, y2?: number): number
 	{
 		let [p1, p2] = optional2Points(p1OrX1, p2OrY1, x2, y2);
@@ -776,24 +799,6 @@ namespace sharp {
 	{
 		let r: any = lineLineIntersection(line1Pos1, line1Pos2, line2Pos1, line2Pos2);
 		return r !== false;
-	};
-	export function lineRectIntersection(linePos1: Point, linePos2: Point, rect: Rectangle): Point|boolean
-	{
-		if (rect.isEmpty() || distance(linePos1, linePos2) === 0)
-			return false;
-		var x1 = linePos1.x;
-		var y1 = linePos1.y;
-
-		var x2 = linePos2.x;
-		var y2 = linePos2.y;
-
-		var bx1 = rect.x;
-		var by1 = rect.y;
-		var bx2 = rect.right;
-		var by2 = rect.bottom;
-
-
-
 	}
 
 	/**

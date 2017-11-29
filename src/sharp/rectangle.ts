@@ -419,7 +419,7 @@ namespace sharp {
 		 */
 		public scale(x: number, y?: number): Rectangle
 		{
-			if (y == null) { y = x; }
+			if (y == undefined) { y = x; }
 
 			this.width *= x;
 			this.height *= y;
@@ -522,11 +522,20 @@ namespace sharp {
 		 * 保持 Rectangle 对象的中心点不变，使用 dx 值横向增加它的大小，使用 dy 值纵向增加它的大小。
 		 * Increases the size of the Rectangle object by the specified amounts. The center point of the Rectangle object stays the same, and its size increases to the left and right by the dx value, and to the top and the bottom by the dy value.
 		 * @method sharp.Rectangle#inflate
-		 * @param {number} dxOrPoint - The x property of this Point object is used to increase the horizontal dimension of the Rectangle object. The y property is used to increase the vertical dimension of the Rectangle object. 对象横向增加的值
-		 * @param {sharp.Point} dxOrPoint  - The amount to be added to the left side of the Rectangle. 此 Point 对象的 x 属性用于增加 Rectangle 对象的水平尺寸。y 属性用于增加 Rectangle 对象的垂直尺寸。
+		 * @param {number} dx - The x property of this Point object is used to increase the horizontal dimension of the Rectangle object. The y property is used to increase the vertical dimension of the Rectangle object. 对象横向增加的值
 		 * @param {number} dy - The amount to be added to the bottom side of the Rectangle. 对象纵向增加的值
 		 * @return {sharp.Rectangle} This Rectangle object.
 		 */
+		public inflate(dx: number, dy: number): Rectangle;
+		/**
+		 * 按指定量增加 Rectangle 对象的大小（以像素为单位）
+		 * 保持 Rectangle 对象的中心点不变，使用 dx 值横向增加它的大小，使用 dy 值纵向增加它的大小。
+		 * Increases the size of the Rectangle object by the specified amounts. The center point of the Rectangle object stays the same, and its size increases to the left and right by the dx value, and to the top and the bottom by the dy value.
+		 * @method sharp.Rectangle#inflate
+		 * @param {sharp.Point} p  - The amount to be added to the left side of the Rectangle. 此 Point 对象的 x 属性用于增加 Rectangle 对象的水平尺寸。y 属性用于增加 Rectangle 对象的垂直尺寸。
+		 * @return {sharp.Rectangle} This Rectangle object.
+		 */
+		public inflate(p: Point): Rectangle;
 		public inflate(dxOrPoint: number|Point, dy?: number): Rectangle
 		{
 			let dx: number;
@@ -534,8 +543,11 @@ namespace sharp {
 			{
 				dx = dxOrPoint.x;
 				dy = dxOrPoint.y;
-			} else
+			} else {
 				dx = dxOrPoint;
+				if (dy == undefined)
+					throw new Error('parameter#1 "dy" must be a number');
+			}
 
 			this.x -= dx;
 			this.width += 2 * dx;
@@ -543,19 +555,6 @@ namespace sharp {
 			this.height += 2 * dy;
 
 			return this;
-		}
-
-		/**
-		 * 按指定量增加 Rectangle 对象的大小（以像素为单位）
-		 * 保持 Rectangle 对象的中心点不变，使用 dx 值横向增加它的大小，使用 dy 值纵向增加它的大小。
-		 * Increases the size of the Rectangle object by the specified amounts. The center point of the Rectangle object stays the same, and its size increases to the left and right by the dx value, and to the top and the bottom by the dy value.
-		 * @method sharp.Rectangle#inflate
-		 * @param {sharp.Point} dxOrPoint  - The amount to be added to the left side of the Rectangle. 此 Point 对象的 x 属性用于增加 Rectangle 对象的水平尺寸。y 属性用于增加 Rectangle 对象的垂直尺寸。
-		 * @return {sharp.Rectangle} This Rectangle object.
-		 */
-		public inflatePoint(p: Point): Rectangle
-		{
-			return this.inflate(p);
 		}
 
 		/**
@@ -584,16 +583,23 @@ namespace sharp {
 
 			return this;
 		}
-
 		/**
 		 * 确定由此 Rectangle 对象定义的矩形区域内是否包含指定的点。
 		 * Determines whether the specified coordinates are contained within the region defined by this Rectangle object.
 		 * @method sharp.Rectangle#contains
-		 * @param {number} xOrPoint - The x coordinate of the point to test.
-		 * @param {Point} xOrPoint - The point object being checked. Can be Point or any object with .x and .y values.
+		 * @param {number} x - The x coordinate of the point to test.
 		 * @param {number} y - The y coordinate of the point to test.
 		 * @return {boolean} A value of true if the Rectangle object contains the specified point; otherwise false. 如果检测点位于矩形内，返回true，否则，返回false
 		 */
+		public contains(x: number, y: number): boolean;
+		/**
+		 * 确定由此 Rectangle 对象定义的矩形区域内是否包含指定的点。
+		 * Determines whether the specified coordinates are contained within the region defined by this Rectangle object.
+		 * @method sharp.Rectangle#containsPoint
+		 * @param {Point} p - The point object being checked. Can be Point or any object with .x and .y values.
+		 * @return {boolean} A value of true if the Rectangle object contains the specified point; otherwise false. 如果检测点位于矩形内，返回true，否则，返回false
+		 */
+		public contains(p: Point): boolean;
 		public contains(xOrPoint: Point|number, y?: number): boolean
 		{
 			let x: number;
@@ -602,25 +608,17 @@ namespace sharp {
 				x = xOrPoint.x;
 				y = xOrPoint.y;
 			} else
+			{
 				x = xOrPoint;
+				if (y == undefined)
+					throw new Error('parameter#1 "y" must be a number');
+			}
 
 			if (this.width <= 0 || this.height <= 0) {
 				return false;
 			}
 
 			return (x >= this.x && x < this.right && y >= this.y && y < this.bottom);
-		}
-
-		/**
-		 * 确定由此 Rectangle 对象定义的矩形区域内是否包含指定的点。
-		 * Determines whether the specified coordinates are contained within the region defined by this Rectangle object.
-		 * @method sharp.Rectangle#containsPoint
-		 * @param {Point} p - The point object being checked. Can be Point or any object with .x and .y values.
-		 * @return {boolean} A value of true if the Rectangle object contains the specified point; otherwise false. 如果检测点位于矩形内，返回true，否则，返回false
-		 */
-		public containsPoint(p: Point): boolean
-		{
-			return this.contains(p);
 		}
 
 		/**
@@ -675,7 +673,7 @@ namespace sharp {
 		 * @param {sharp.Rectangle} rect - The second Rectangle object. 要对照比较以查看其是否与此 Rectangle 对象相交的 Rectangle 对象。
 		 * @return {sharp.Rectangle} A Rectangle object that equals the area of intersection. If the Rectangles do not intersect, this method returns an empty Rectangle object; that is, a Rectangle with its x, y, width, and height properties set to 0. 等于交集区域的 Rectangle 对象。如果该矩形不相交，则此方法返回一个空的 Rectangle 对象；即，其 x、y、width 和 height 属性均设置为 0 的矩形。
 		 */
-		public intersection(rect): Rectangle
+		public intersection(rect: Rectangle): Rectangle
 		{
 			let output = new Rectangle();
 			if (this.intersects(rect))
