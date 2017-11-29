@@ -17,7 +17,8 @@
 		]
 	},
 	"files": [
-		"../axios/bin/axios.d.ts"
+		"../axios/bin/axios.d.ts",
+		"../lodash/bin/lodash.d.ts"
 	],
 	"include": [
 		"src"
