@@ -3,7 +3,7 @@ namespace http {
 		private instance: AxiosInstance;
 		public autoTip: boolean = false;
 
-		constructor(baseURL?: string, timeout: number = 2000)
+		constructor(baseURL?: string, timeout: number = 20000)
 		{
 			this.instance = axios.create({
 				baseURL: baseURL == null ? '' : baseURL,
