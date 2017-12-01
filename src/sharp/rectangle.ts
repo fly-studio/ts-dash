@@ -10,6 +10,10 @@ namespace sharp {
 			this.setTo(x, y, width, height);
 		}
 
+		public get vertices(): Vertices {
+			return new Vertices('L 0 0 L ' + this.width + ' 0 L ' + this.width + ' ' + this.height + ' L 0 ' + this.height);
+		}
+
 		/**
 		 * The x coordinate of the left of the Rectangle. Changing the left property of a Rectangle object has no effect on the y and height properties. However it does affect the width property, whereas changing the x value does not affect the width property.
 		 * @name sharp.Rectangle#left

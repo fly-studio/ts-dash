@@ -21,6 +21,10 @@ namespace sharp {
 			return this.start.distance(this.end);
 		}
 
+		public get vertices(): Vertices {
+			return new Vertices([this.start, this.end]);
+		}
+
 		/**
 		 * @name sharp.Line#angle
 		 * @property {number} angle - Gets the angle of the line in radians.

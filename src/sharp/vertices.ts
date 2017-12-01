@@ -51,7 +51,7 @@ namespace sharp {
 		}
 	}
 
-	class Vertices {
+	export class Vertices {
 		public items: Vertex[];
 
 		constructor(path: string);
@@ -60,6 +60,11 @@ namespace sharp {
 		constructor(p: any)
 		{
 			this.setTo(p);
+		}
+
+		public get length(): number
+		{
+			return this.items.length;
 		}
 
 		public setTo(path: string): Vertices;
@@ -126,6 +131,21 @@ namespace sharp {
 			return vertices;
 		}
 
+		public at(index: number)
+		{
+			return this.items[index];
+		}
+
+		public getBounds(): Bounds
+		{
+			return new Bounds(this);
+		}
+
+		public getAxes(): Axes
+		{
+			return new Axes(this);
+		}
+
 		/**
 		 * Returns the centre (centroid) of the set of vertices.
 		 * @method centre
@@ -152,6 +172,7 @@ namespace sharp {
 		}
 
 		/**
+		 * 平均值
 		 * Returns the average (mean) of the set of vertices.
 		 * @method mean
 		 * @return {vector} The average point
@@ -166,7 +187,8 @@ namespace sharp {
 			return average.divide(this.items.length);
 		}
 
-		 /**
+		/**
+		 * 面积
 		 * Returns the area of the set of vertices.
 		 * @method area
 		 * @param {boolean} signed
@@ -188,6 +210,7 @@ namespace sharp {
 		}
 
 		/**
+		 * 惯性
 		 * Returns the moment of inertia (second moment of area) of the set of vertices given the total mass.
 		 * @method inertia
 		 * @param {number} mass
@@ -216,6 +239,7 @@ namespace sharp {
 		}
 
 		/**
+		 * 根据质点转换成正常坐标(原坐标都是以(0, 0)开始)
 		 * Translates the set of vertices in-place.
 		 * @method translate
 		 * @param {vector} vector
@@ -240,6 +264,7 @@ namespace sharp {
 		}
 
 		/**
+		 * 以质点旋转
 		 * Rotates the set of vertices in-place.
 		 * @method rotate
 		 * @param {number} angle
@@ -266,6 +291,7 @@ namespace sharp {
 		}
 
 		/**
+		 * 包含某点
 		 * Returns `true` if the `point` is inside the set of `vertices`.
 		 * @method contains
 		 * @param {vector} point
@@ -285,6 +311,7 @@ namespace sharp {
 		}
 
 		/**
+		 * 以中心点缩放
 		 * Scales the vertices from a point (default is centre) in-place.
 		 * @method scale
 		 * @param {number} scaleX
@@ -311,7 +338,7 @@ namespace sharp {
 		}
 
 		/**
-		 * 圆角
+		 * 添加圆角
 		 * Chamfers a set of vertices by giving them rounded corners, returns a new set of vertices.
 		 * The radius parameter is a single number or an array to specify the radius for each vertex.
 		 * @method chamfer
@@ -389,6 +416,7 @@ namespace sharp {
 		}
 
 		/**
+		 * 是否是凸面，必须先让元素顺时针排序
 		 * Returns true if the vertices form a convex shape (vertices must be in clockwise order).
 		 * @method isConvex
 		 * @return {bool} `true` if the `vertices` are convex, `false` if not (or `null` if not computable).
@@ -433,6 +461,7 @@ namespace sharp {
 		}
 
 		/**
+		 * 返回凸面部分的坐标
 		 * Returns the convex hull of the input vertices as a new array of points.
 		 * @method hull
 		 * @return [vertex] vertices
