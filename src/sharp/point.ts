@@ -70,13 +70,14 @@ namespace sharp {
 		}
 
 		/**
+		 * 将一对极坐标转换为笛卡尔点坐标。
 		 * Sets the `x` and `y` values of this Point object from a given polar coordinate.
 		 * @method sharp.Point#setToPolar
-		 * @param {number} azimuth The angular coordinate, in radians 弧度.
-		 * @param {number} radius 半径
+		 * @param {number} azimuth The angular coordinate, in radians 极坐标对的弧度
+		 * @param {number} radius 极坐标对的长度。
 		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
-		public setToPolar(azimuth: number, radius: number = 1): Point
+		public polar(azimuth: number, radius: number = 1): Point
 		{
 
 			return this.setTo(Math.cos(azimuth) * radius, Math.sin(azimuth) * radius);
@@ -101,8 +102,9 @@ namespace sharp {
 		 * @param {number} deltaY - The value to subtract from Point.y.
 		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
-		public subtract(deltaX: number, deltaY: number): Point
+		public subtract(deltaX: number, deltaY?: number): Point
 		{
+			if (deltaY == undefined) deltaY = deltaX;
 			this.x -= deltaX;
 			this.y -= deltaY;
 
@@ -117,8 +119,9 @@ namespace sharp {
 		 * @param {number} deltaY - The value to add to Point.y.
 		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
-		public add(deltaX: number, deltaY: number): Point
+		public add(deltaX: number, deltaY?: number): Point
 		{
+			if (deltaY == undefined) deltaY = deltaX;
 			this.x += deltaX;
 			this.y += deltaY;
 
@@ -133,8 +136,9 @@ namespace sharp {
 		 * @param deltaY - The value to multiply Point.x by.
 		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
-		public multiply(deltaX: number, deltaY: number): Point
+		public multiply(deltaX: number, deltaY?: number): Point
 		{
+			if (deltaY == undefined) deltaY = deltaX;
 			this.x *= deltaX;
 			this.y *= deltaY;
 
@@ -149,8 +153,9 @@ namespace sharp {
 		 * @param deltaY - The value to divide Point.x by.
 		 * @return {sharp.Point} This Point object. Useful for chaining method calls.
 		 */
-		public divide(deltaX: number, deltaY: number): Point
+		public divide(deltaX: number, deltaY?: number): Point
 		{
+			if (deltaY == undefined) deltaY = deltaX;
 			this.x /= deltaX;
 			this.y /= deltaY;
 
@@ -285,13 +290,13 @@ namespace sharp {
 		* Rotates this Point around the x/y coordinates given to the desired angle.
 		*
 		* @method sharp.Point#rotate
+		* @param {number} angle - The angle in radians (unless asDegrees is true) to rotate the Point to.
 		* @param {number} x - The x coordinate of the anchor point.
 		* @param {number} y - The y coordinate of the anchor point.
-		* @param {number} angle - The angle in radians (unless asDegrees is true) to rotate the Point to.
 		* @param {number} [distance] - An optional distance constraint between the Point and the anchor.
 		* @return {sharp.Point} The modified point object.
 		*/
-		public rotate(x: number, y: number, angle: number, distance?: number): Point
+		public rotate(angle: number, x: number = 0, y: number = 0, distance?: number): Point
 		{
 			if (distance == null) {
 				this.subtract(x, y);
@@ -314,6 +319,21 @@ namespace sharp {
 		}
 
 		/**
+		 * Rotates the Point about a specified point by specified angle.
+		 * @method sharp.Point#rotateAbout
+		 * @param {number} x
+		 * @param {number} y
+		 * @param {number} angle
+		 * @param {Point} point
+		 * @param {Point} [output]
+		 * @return {Point} A new Point rotated about the point
+		 */
+		public rotateAbout(angle: number, p: Point): Point
+		{
+			return this.rotate(angle, p.x, p.y);
+		};
+
+		/**
 		* Calculates the length of the Point object.
 		*
 		* @method sharp.Point#getMagnitude
@@ -327,10 +347,10 @@ namespace sharp {
 		/**
 		* Calculates the length squared of the Point object.
 		*
-		* @method sharp.Point#getMagnitudeSq
+		* @method sharp.Point#getMagnitudeSquared
 		* @return {number} The length ^ 2 of the Point.
 		*/
-		public getMagnitudeSq(): number
+		public getMagnitudeSquared(): number
 		{
 			return (this.x * this.x) + (this.y * this.y);
 		}
@@ -373,7 +393,7 @@ namespace sharp {
 		*/
 		public limit(max: number): Point
 		{
-			if (this.getMagnitudeSq() > max * max) {
+			if (this.getMagnitudeSquared() > max * max) {
 				this.setMagnitude(max);
 			}
 
@@ -413,6 +433,18 @@ namespace sharp {
 		public cross(p: Point): number
 		{
 			return ((this.x * p.y) - (this.y * p.x));
+		}
+
+		/**
+		 * Returns the cross-product of three points.
+		 * @method sharp.Point#cross3
+		 * @param {Point} p1
+		 * @param {Point} p2
+		 * @return {number} The cross product of the three points.
+		 */
+		public cross3(p1: Point, p2: Point) : number
+		{
+			return (p1.x - this.x) * (p2.y - this.y) - (p1.y - this.y) * (p2.x - this.x);
 		}
 
 		/**
@@ -522,7 +554,7 @@ namespace sharp {
 		{
 			let out = new Point();
 
-			let amt: number = this.dot(p) / p.getMagnitudeSq();
+			let amt: number = this.dot(p) / p.getMagnitudeSquared();
 
 			if (amt !== 0) {
 				out.setTo(amt * p.x, amt * p.y);
@@ -629,6 +661,7 @@ namespace sharp {
 
 			return out;
 		}
-
 	}
+
+	export const Vector = Point;
 }

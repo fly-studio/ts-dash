@@ -1,8 +1,8 @@
 namespace sharp {
 	export class Line {
 
-		private start: Point;
-		private end: Point;
+		public start: Point;
+		public end: Point;
 
 		constructor(p1: Point, p2: Point)
 		constructor(x1?: number, y1?: number, x2?: number, y2?: number);
@@ -168,6 +168,20 @@ namespace sharp {
 		}
 
 		/**
+		 * Sets this line to start at the given `x` and `y` coordinates and for the segment to extend at `angle` for the given `length`.
+		 *
+		 * @method sharp.Line#fromAngle
+		 * @param {number} pt - The start coordinate of the line.
+		 * @param {number} angle - The angle of the line in radians.
+		 * @param {number} length - The length of the line in pixels.
+		 * @return {sharp.Line} This line object
+		 */
+		public static createFromAngle(p: Point, angle: number, length: number)
+		{
+			return new Line(p, sharp.circlePoint(p, length, angle));
+		}
+
+		/**
 		* Sets the components of the Line to the specified values.
 		*
 		* @method Phaser.Line#setTo
@@ -193,20 +207,6 @@ namespace sharp {
 			this.start = p1.clone();
 			this.end = p2.clone();
 			return this;
-		}
-		/**
-		 * Sets this line to start at the given `x` and `y` coordinates and for the segment to extend at `angle` for the given `length`.
-		 *
-		 * @method sharp.Line#fromAngle
-		 * @param {number} pt - The start coordinate of the line.
-		 * @param {number} angle - The angle of the line in radians.
-		 * @param {number} length - The length of the line in pixels.
-		 * @return {sharp.Line} This line object
-		 */
-		public fromAngle(p: Point, angle: number, length: number)
-		{
-			this.start.setTo(p);
-			this.end = sharp.circlePoint(p, angle, length)
 		}
 
 		/**
@@ -315,7 +315,7 @@ namespace sharp {
 		* @param {sharp.Rectangle|object} rect - The rectangle, or rectangle-like object, to check for intersection with.
 		* @return {boolean} True if the line intersects with the rectangle edges, or starts or ends within the rectangle.
 		*/
-		intersectsRectangle(rect: Rectangle): boolean
+		public intersectsRectangle(rect: Rectangle): boolean
 		{
 			//  Quick bail out
 			if (this.length === 0 || rect.empty) {
@@ -468,10 +468,10 @@ namespace sharp {
 		 * @method sharp.Line#pointOnLine
 		 * @param {number} x - The line to check against this one.
 		 * @param {number} y - The line to check against this one.
-		 * @param {number} [epsilon=0] - Range for a fuzzy comparison, e.g., 0.0001.
+		 * @param {number} [epsilon=0.0001] - Range for a fuzzy comparison, e.g., 0.0001.
 		 * @return {boolean} True if the point is on the line, false if not.
 		 */
-		public pointOnLine(x: number, y: number, epsilon: number = 0): boolean
+		public pointOnLine(x: number, y: number, epsilon: number = 0.0001): boolean
 		{
 			return math.fuzzyEquals((x - this.start.x) * (this.end.y - this.start.y), (this.end.x - this.start.x) * (y - this.start.y), epsilon);
 		}
@@ -482,10 +482,10 @@ namespace sharp {
 		 * @method sharp.Line#pointOnSegment
 		 * @param {number} x - The line to check against this one.
 		 * @param {number} y - The line to check against this one.
-		 * @param {number} [epsilon=0] - Range for a fuzzy comparison, e.g., 0.0001.
+		 * @param {number} [epsilon=0.0001] - Range for a fuzzy comparison, e.g., 0.0001.
 		 * @return {boolean} True if the point is on the line and segment, false if not.
 		 */
-		public pointOnSegment(x: number, y: number, epsilon: number = 0): boolean
+		public pointOnSegment(x: number, y: number, epsilon: number = 0.0001): boolean
 		{
 			let xMin: number = Math.min(this.start.x, this.end.x);
 			let xMax: number = Math.max(this.start.x, this.end.x);
