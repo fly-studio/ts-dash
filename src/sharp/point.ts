@@ -31,6 +31,31 @@ namespace sharp {
 		}
 
 		/**
+		 * Parses an object for x and/or y properties and returns a new sharp.Point with matching values.
+		 * If the object doesn't contain those properties a Point with x/y of zero will be returned.
+		 *
+		 * @method sharp.Point#parse
+		 * @static
+		 * @param {object} obj - The object to parse.
+		 * @param {string} [xProp='x'] - The property used to set the Point.x value.
+		 * @param {string} [yProp='y'] - The property used to set the Point.y value.
+		 * @return {sharp.Point} The new Point object.
+		 */
+		public static createFrom(obj: Object, xProp: string = 'x', yProp: string = 'y'): Point {
+			let point = new Point();
+
+			if (obj[xProp]) {
+				point.x = parseInt(obj[xProp], 10);
+			}
+
+			if (obj[yProp]) {
+				point.y = parseInt(obj[yProp], 10);
+			}
+
+			return point;
+		}
+
+		/**
 		 * 设置值到目标
 		 * Copies the x and y properties from this Point to any given object.
 		 * @method sharp.Point#copyTo
@@ -594,31 +619,7 @@ namespace sharp {
 			return '[{Point (x=' + this.x + ' y=' + this.y + ')}]';
 		}
 
-		/**
-		 * Parses an object for x and/or y properties and returns a new sharp.Point with matching values.
-		 * If the object doesn't contain those properties a Point with x/y of zero will be returned.
-		 *
-		 * @method sharp.Point#parse
-		 * @static
-		 * @param {object} obj - The object to parse.
-		 * @param {string} [xProp='x'] - The property used to set the Point.x value.
-		 * @param {string} [yProp='y'] - The property used to set the Point.y value.
-		 * @return {sharp.Point} The new Point object.
-		 */
-		public static parse(obj: Object, xProp: string = 'x', yProp: string = 'y'): Point
-		{
-			let point = new Point();
 
-			if (obj[xProp]) {
-				point.x = parseInt(obj[xProp], 10);
-			}
-
-			if (obj[yProp]) {
-				point.y = parseInt(obj[yProp], 10);
-			}
-
-			return point;
-		}
 
 		/**
 		 * Tests a Point or Point-like object.
