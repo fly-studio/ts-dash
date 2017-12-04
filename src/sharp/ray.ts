@@ -78,9 +78,25 @@ namespace sharp {
 			return pt.sort((p1, p2) => p1.distance(this.start) - p2.distance(this.start)); //按照距离正序排列
 		}
 
-		public virtualLineToLine(line: Line) : Line
+		public intersectsCircle(circle: Circle): Point[]
 		{
-			return Line.createFromAngle(this.start, this.angle, Math.max(sharp.distance(this.start, line.start), sharp.distance(this.start, line.end)));
+			let line = this.virtualLineToLength(sharp.distance(this.start, circle.centerPoint) + circle.radius);
+			return circle.intersectsLine(line);
+		}
+
+		public virtualLineToLine(line: Line): Line
+		{
+			return this.virtualLineToLength(Math.max(sharp.distance(this.start, line.start), sharp.distance(this.start, line.end)));
+		}
+
+		public virtualLineToPoint(p: Point): Line
+		{
+			return this.virtualLineToLength(sharp.distance(p, this.start));
+		}
+
+		public virtualLineToLength(length: number): Line
+		{
+			return Line.createFromAngle(this.start, this.angle, length);
 		}
 	}
 }
