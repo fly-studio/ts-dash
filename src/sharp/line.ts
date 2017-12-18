@@ -4,6 +4,16 @@ namespace sharp {
 		public start: Point;
 		public end: Point;
 
+		/**
+		 * Creates a new Line object with a start and an end point.
+		 *
+		 * @class Phaser.Line
+		 * @constructor
+		 * @param {number} [x1=0] - The x coordinate of the start of the line.
+		 * @param {number} [y1=0] - The y coordinate of the start of the line.
+		 * @param {number} [x2=0] - The x coordinate of the end of the line.
+		 * @param {number} [y2=0] - The y coordinate of the end of the line.
+		 */
 		constructor(p1: Point, p2: Point)
 		constructor(x1?: number, y1?: number, x2?: number, y2?: number);
 		constructor(x1: any = 0, y1: any = 0, x2: number = 0, y2: number = 0)
@@ -19,10 +29,6 @@ namespace sharp {
 		public get length(): number
 		{
 			return this.start.distance(this.end);
-		}
-
-		public get vertices(): Vertices {
-			return new Vertices([this.start, this.end]);
 		}
 
 		/**
@@ -211,6 +217,10 @@ namespace sharp {
 			this.start = p1.clone();
 			this.end = p2.clone();
 			return this;
+		}
+
+		public vertices(): Vertices {
+			return new Vertices([this.start, this.end]);
 		}
 
 		/**

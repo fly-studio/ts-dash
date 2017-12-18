@@ -466,7 +466,7 @@ namespace sharp {
 		 * @method hull
 		 * @return [vertex] vertices
 		 */
-		public hull(): Vertex[]
+		public hull(): Vertices
 		{
 			// http://geomalgorithms.com/a10-_hull-1.html
 
@@ -511,7 +511,9 @@ namespace sharp {
 			upper.pop();
 			lower.pop();
 
-			return upper.concat(lower);
+			this.items = upper.concat(lower);
+
+			return this;
 		}
 
 	}

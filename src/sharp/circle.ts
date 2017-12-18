@@ -4,14 +4,24 @@ namespace sharp {
 		public y: number;
 		public radius: number;
 
-		constructor(p: Point, radius: number);
-		constructor(x: number, y: number, radius: number);
-		constructor(xOrPoint: number | Point, y: number, radius?: number)
+		/**
+		 * Creates a new Circle object with the center coordinate specified by the x and y parameters and the radius specified by the radius parameter.
+		 * If you call this function without parameters, a circle with x, y, diameter and radius properties set to 0 is created.
+		 *
+		 * @class sharp.Circle
+		 * @constructor
+		 * @param {number} [x=0] - The x coordinate of the center of the circle.
+		 * @param {number} [y=0] - The y coordinate of the center of the circle.
+		 * @param {number} [radius=0] - The radius of the circle.
+		 */
+		constructor(p: Point, radius?: number);
+		constructor(x?: number, y?: number, radius?: number);
+		constructor(x: number | Point = 0, y: number = 0, radius: number = 0)
 		{
-			if (xOrPoint instanceof Point)
-				this.setTo(xOrPoint, y);
+			if (x instanceof Point)
+				this.setTo(x, y);
 			else
-				this.setTo(xOrPoint, y, radius!);
+				this.setTo(x, y, radius);
 		}
 
 		public get diameter(): number
@@ -169,22 +179,21 @@ namespace sharp {
 		 * @return {Circle} This circle object.
 		 */
 		public setTo(x: number, y: number, radius: number): Circle;
-		public setTo(xOrPoint: number | Point, y: number, radius?: number): Circle
+		public setTo(x: number | Point, y: number, radius?: number): Circle
 		{
-			let x: number;
-			if (xOrPoint instanceof Point)
+			if (x instanceof Point)
 			{
-				x = xOrPoint.x;
-				radius = y;
-				y = xOrPoint.y;
+				this.x = x.x;
+				this.y = x.y;
+				this.radius = y;
 			} else {
 				if (radius == undefined)
 					throw new Error('parameter#2 radius must be a number');
-				x = xOrPoint;
+				this.x = x;
+				this.y = y;
+				this.radius = radius;
 			}
-			this.x = x;
-			this.y = y;
-			this.radius = radius;
+
 
 			return this;
 		}
@@ -199,22 +208,32 @@ namespace sharp {
 		}
 
 
-		public static create(p: Point, diameter: number): Circle;
-		public static create(x: number, y: number, radius: number): Circle;
-		public static create(xOrPoint: number | Point, y: number, radius?: number): Circle
+		public static create(p: Point, diameter?: number): Circle;
+		public static create(x?: number, y?: number, radius?: number): Circle;
+		public static create(x: number | Point = 0, y: number = 0, radius: number = 0): Circle
 		{
-			if (xOrPoint instanceof Point)
-				return new Circle(xOrPoint, y);
+			if (x instanceof Point)
+				return new Circle(x, y);
 			else
-				return new Circle(xOrPoint, y, radius!);
+				return new Circle(x, y, radius);
+		}
+
+		public vertices(maxSides: number = 25): Vertices
+		{
+			// approximate circles with polygons until true circles implemented in SAT
+			let sides: number = Math.ceil(Math.max(10, Math.min(maxSides, this.radius)));
+
+			// optimisation: always use even number of sides (half the number of unique axes)
+			if (sides % 2 === 1)
+				sides += 1;
+
+			return (new RigidPolygon(this.x, this.y, sides, this.radius)).vertices();
 		}
 
 		/**
 		 * Returns a uniformly distributed random point from anywhere within this Circle.
 		 *
 		 * @method sharp.Circle#random
-		 * @param {sharp.Point|object} [out] - A sharp.Point, or any object with public x/y properties, that the values will be set in.
-		 *     If no object is provided a new sharp.Point object will be created. In high performance areas avoid this by re-using an existing object.
 		 * @return {sharp.Point} An object containing the random point in its `x` and `y` properties.
 		 */
 		public random(): Point
@@ -258,7 +277,7 @@ namespace sharp {
 		 * @param {any} dest - The object to copy to.
 		 * @return {object} This dest object.
 		 */
-		public copyTo(dest: any): Circle
+		public copyTo(dest: any)
 		{
 			dest.x = this.x;
 			dest.y = this.y;

@@ -4,14 +4,20 @@ namespace sharp {
 		public y: number;
 		public width: number;
 		public height: number;
-
+		/**
+		 * Creates a new Rectangle object with the top-left corner specified by the x and y parameters and with the specified width and height parameters.
+		 * If you call this function without parameters, a Rectangle with x, y, width, and height properties set to 0 is created.
+		 *
+		 * @class Phaser.Rectangle
+		 * @constructor
+		 * @param {number} x - The x coordinate of the top-left corner of the Rectangle.
+		 * @param {number} y - The y coordinate of the top-left corner of the Rectangle.
+		 * @param {number} width - The width of the Rectangle. Should always be either zero or a positive value.
+		 * @param {number} height - The height of the Rectangle. Should always be either zero or a positive value.
+		 */
 		public constructor(x: number = 0, y: number = 0, width: number = 0, height: number = 0)
 		{
 			this.setTo(x, y, width, height);
-		}
-
-		public get vertices(): Vertices {
-			return new Vertices('L 0 0 L ' + this.width + ' 0 L ' + this.width + ' ' + this.height + ' L 0 ' + this.height);
 		}
 
 		/**
@@ -347,7 +353,7 @@ namespace sharp {
 		 * @param {Rectangle} dest The object to copy to.
 		 * @return {object} This object.
 		 */
-		public copyTo(dest: Rectangle): Rectangle
+		public copyTo(dest: Rectangle)
 		{
 			dest.x = this.x;
 			dest.y = this.y;
@@ -383,6 +389,11 @@ namespace sharp {
 		public isEmpty(): boolean
 		{
 			return this.empty;
+		}
+
+		public vertices(): Vertices
+		{
+			return new Vertices('L 0 0 L ' + this.width + ' 0 L ' + this.width + ' ' + this.height + ' L 0 ' + this.height);
 		}
 
 		/**
