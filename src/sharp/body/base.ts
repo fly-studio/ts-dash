@@ -78,8 +78,6 @@ namespace sharp.body {
 			this.options.plugin = value;
 		}
 
-
-
 		protected abstract defaultOptions(): any
 
 		/**

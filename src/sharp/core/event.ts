@@ -7,10 +7,10 @@ namespace sharp.events {
 	 * @param {function} callback
 	 */
 	export function on(obj: body.Base, eventNames: string, callback: Function): Function {
-		var names = eventNames.split(' '),
-			name;
+		let names = eventNames.split(' '),
+			name: string;
 
-		for (var i = 0; i < names.length; i++) {
+		for (let i = 0; i < names.length; i++) {
 			name = names[i];
 			obj.events = obj.events || {};
 			obj.events[name] = obj.events[name] || [];
@@ -39,14 +39,14 @@ namespace sharp.events {
 			eventNames = object.keys(obj.events).join(' ');
 		}
 
-		var names = eventNames.split(' ');
+		let names = eventNames.split(' ');
 
-		for (var i = 0; i < names.length; i++) {
-			var callbacks = obj.events[names[i]],
+		for (let i = 0; i < names.length; i++) {
+			let callbacks = obj.events[names[i]],
 				newCallbacks = [];
 
 			if (callback && callbacks) {
-				for (var j = 0; j < callbacks.length; j++) {
+				for (let j = 0; j < callbacks.length; j++) {
 					if (callbacks[j] !== callback)
 						newCallbacks.push(callbacks[j]);
 				}
@@ -64,10 +64,10 @@ namespace sharp.events {
 	 * @param {} event
 	 */
 	export function trigger(obj: body.Base, eventNames: string, event: any) {
-		var names,
-			name,
-			callbacks,
-			eventClone;
+		let names: string[],
+			name: string,
+			callbacks: Function,
+			eventClone: any;
 
 		if (obj.events) {
 			if (!event)
@@ -75,7 +75,7 @@ namespace sharp.events {
 
 			names = eventNames.split(' ');
 
-			for (var i = 0; i < names.length; i++) {
+			for (let i = 0; i < names.length; i++) {
 				name = names[i];
 				callbacks = obj.events[name];
 
@@ -84,7 +84,7 @@ namespace sharp.events {
 					eventClone.name = name;
 					eventClone.source = obj;
 
-					for (var j = 0; j < callbacks.length; j++) {
+					for (let j = 0; j < callbacks.length; j++) {
 						callbacks[j].apply(obj, [eventClone]);
 					}
 				}
