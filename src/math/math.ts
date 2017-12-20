@@ -1,4 +1,5 @@
 namespace math {
+	let _seed: number = 0;
 
 	/**
 	 * Given a number, this function returns the closest number that is a power of two.
@@ -59,6 +60,24 @@ namespace math {
 		}
 
 		return (Math.random() * (max - min) + min);
+	}
+
+	/**
+	 * Returns a random value between a minimum and a maximum value inclusive.
+	 * The function uses a seeded random generator.
+	 * @method random
+	 * @param {number} min
+	 * @param {number} max
+	 * @return {number} A random number between min and max inclusive
+	 */
+	export function linearRandom(min: number = 0, max: number = 1) {
+		return min + _seededRandom() * (max - min);
+	}
+
+	function _seededRandom() {
+		// https://en.wikipedia.org/wiki/Linear_congruential_generator
+		_seed = (_seed * 9301 + 49297) % 233280;
+		return _seed / 233280;
 	}
 
 	/**

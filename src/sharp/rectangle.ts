@@ -4,6 +4,7 @@ namespace sharp {
 		public y: number;
 		public width: number;
 		public height: number;
+
 		/**
 		 * Creates a new Rectangle object with the top-left corner specified by the x and y parameters and with the specified width and height parameters.
 		 * If you call this function without parameters, a Rectangle with x, y, width, and height properties set to 0 is created.

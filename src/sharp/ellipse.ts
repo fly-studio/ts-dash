@@ -4,6 +4,7 @@ namespace sharp {
 		public y: number;
 		public width: number;
 		public height: number;
+
 		/**
 		 * Creates a Ellipse object. A curve on a plane surrounding two focal points.
 		 *

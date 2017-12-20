@@ -7,10 +7,10 @@ namespace sharp {
 		/**
 		 * A Point object represents a location in a two-dimensional coordinate system, where x represents the horizontal axis and y represents the vertical axis.
 		 * The following code creates a point at (0,0):
-		 * `var myPoint = new Phaser.Point();`
+		 * `var myPoint = new sharp.Point();`
 		 * You can also use them as 2D Vectors and you'll find different vector related methods in this class.
 		 *
-		 * @class Phaser.Point
+		 * @class sharp.Point
 		 * @constructor
 		 * @param {number} [x=0] - The horizontal position of this Point.
 		 * @param {number} [y=0] - The vertical position of this Point.
@@ -59,6 +59,19 @@ namespace sharp {
 			}
 
 			return point;
+		}
+
+		/**
+		 * Copies the x and y properties from any given object to this Point.
+		 *
+		 * @method sharp.Point#copyFrom
+		 * @param {any} source - The object to copy from.
+		 * @return {sharp.Point} This Point object.
+		 */
+		public copyFrom(source: any)
+		{
+			this.x = source.x;
+			this.x = source.y;
 		}
 
 		/**
@@ -329,7 +342,7 @@ namespace sharp {
 		*/
 		public rotate(angle: number, x: number = 0, y: number = 0, distance?: number): Point
 		{
-			if (distance == null) {
+			if (distance == undefined) {
 				this.subtract(x, y);
 
 				let s: number = Math.sin(angle);
@@ -361,7 +374,9 @@ namespace sharp {
 		 */
 		public rotateAbout(angle: number, p: Point): Point
 		{
-			return this.rotate(angle, p.x, p.y);
+			let cos = Math.cos(angle), sin = Math.sin(angle);
+			return this.setTo(p.x + ((this.x - p.x) * cos - (this.y - p.y) * sin), p.y + ((this.x - p.x) * sin + (this.y - p.y) * cos));
+			//return this.rotate(angle, p.x, p.y);
 		};
 
 		/**

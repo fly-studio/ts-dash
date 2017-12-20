@@ -7,7 +7,7 @@ namespace sharp {
 		/**
 		 * Creates a new Line object with a start and an end point.
 		 *
-		 * @class Phaser.Line
+		 * @class sharp.Line
 		 * @constructor
 		 * @param {number} [x1=0] - The x coordinate of the start of the line.
 		 * @param {number} [y1=0] - The y coordinate of the start of the line.
@@ -194,21 +194,21 @@ namespace sharp {
 		/**
 		* Sets the components of the Line to the specified values.
 		*
-		* @method Phaser.Line#setTo
+		* @method sharp.Line#setTo
 		* @param {sharp.Point} [p1=0] - The start coordinate of the line.
 		* @param {number} [p2=0] - The end coordinate of the line.
-		* @return {Phaser.Line} This line object
+		* @return {sharp.Line} This line object
 		*/
 		public setTo(p1: Point, p2: Point): Line;
 		/**
 		* Sets the components of the Line to the specified values.
 		*
-		* @method Phaser.Line#setTo
+		* @method sharp.Line#setTo
 		* @param {number} x1 - The x coordinate of the start of the line.
 		* @param {number} y1 - The y coordinate of the start of the line.
 		* @param {number} x2 - The x coordinate of the end of the line.
 		* @param {number} y2 - The y coordinate of the end of the line.
-		* @return {Phaser.Line} This line object
+		* @return {sharp.Line} This line object
 		*/
 		public setTo(x1: number, y1: number, x2: number, y2: number): Line;
 		public setTo(p1OrX1: Point | number, p2OrY1: Point | number, x2?: number, y2?: number): Line

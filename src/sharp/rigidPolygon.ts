@@ -7,13 +7,12 @@ namespace sharp {
 
 		/**
 		 * Creates a new Rigid Polygon object with the center coordinate specified by the x and y parameters and the radius specified by the radius parameter.
-		 * If you call this function without parameters, a Rigid Polygon with x, y, diameter and radius properties set to 0 is created.
 		 *
 		 * @class sharp.RigidPolygon
 		 * @constructor
-		 * @param {number} [x=0] - The x coordinate of the center of the circle.
-		 * @param {number} [y=0] - The y coordinate of the center of the circle.
-		 * @param {number} [radius=0] - The radius of the circle.
+		 * @param {number} [x=0] - The x coordinate of the center of the Rigid Polygon.
+		 * @param {number} [y=0] - The y coordinate of the center of the Rigid Polygon.
+		 * @param {number} [radius=0] - The radius of the Rigid Polygon.
 		 */
 		constructor(p: Point, sides: number, radius: number);
 		constructor(x: number, y: number, sides: number, radius: number);

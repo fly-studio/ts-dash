@@ -39,7 +39,7 @@ namespace sharp {
 			this.max.y = -Infinity;
 
 			for (let i:number = 0; i < vertices.length; i++) {
-				let vertex = vertices.items[i];
+				let vertex = vertices.at(i);
 				if (vertex.x > this.max.x) this.max.x = vertex.x;
 				if (vertex.x < this.min.x) this.min.x = vertex.x;
 				if (vertex.y > this.max.y) this.max.y = vertex.y;

@@ -14,6 +14,22 @@ namespace sharp {
 		 */
 		public closed: boolean = true;
 
+		/**
+		 * Creates a new Polygon.
+		 *
+		 * The points can be set from a variety of formats:
+		 *
+		 * - An array of Point objects: `[new sharp.Point(x1, y1), ...]`
+		 * - An array of objects with public x/y properties: `[obj1, obj2, ...]`
+		 * - An array of paired numbers that represent point coordinates: `[x1,y1, x2,y2, ...]`
+		 * - As separate Point arguments: `setTo(new sharp.Point(x1, y1), ...)`
+		 * - As separate objects with public x/y properties arguments: `setTo(obj1, obj2, ...)`
+		 * - As separate arguments representing point coordinates: `setTo(x1,y1, x2,y2, ...)`
+		 *
+		 * @class sharp.Polygon
+		 * @constructor
+		 * @param {sharp.Point[]|number[]|...sharp.Point|...number} points - The points to set.
+		 */
 		constructor(xy: number[]);
 		constructor(points: Point[]);
 		constructor(x: number, y:number, ...args:number[]);
@@ -148,13 +164,13 @@ namespace sharp {
 		}
 
 		/**
-		* Checks whether the x and y coordinates are contained within this polygon.
-		*
-		* @method sharp.Polygon#contains
-		* @param {number} x - The X value of the coordinate to test.
-		* @param {number} y - The Y value of the coordinate to test.
-		* @return {boolean} True if the coordinates are within this polygon, otherwise false.
-		*/
+		 * Checks whether the x and y coordinates are contained within this polygon.
+		 *
+		 * @method sharp.Polygon#contains
+		 * @param {number} x - The X value of the coordinate to test.
+		 * @param {number} y - The Y value of the coordinate to test.
+		 * @return {boolean} True if the coordinates are within this polygon, otherwise false.
+		 */
 		public contains(x: number, y: number): boolean
 		{
 

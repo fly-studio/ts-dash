@@ -1,6 +1,6 @@
 namespace http {
 	export class Query {
-		private instance: AxiosInstance;
+		protected instance: AxiosInstance;
 		public autoTip: boolean = false;
 
 		constructor(baseURL?: string, timeout: number = 20000)

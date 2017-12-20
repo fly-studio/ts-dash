@@ -2,7 +2,7 @@ namespace sharp {
 	export interface VertexStuct {
 		x: number,
 		y: number,
-		index: number,
+		index?: number,
 		isInternal: boolean,
 	}
 
@@ -10,18 +10,26 @@ namespace sharp {
 		public x: number;
 		public y: number;
 		public index: number;
+		public body: body.Base;
 		public isInternal: boolean;
 
-		constructor(x: number, y: number, index: number, isInternal?: boolean);
+		constructor(x: number, y: number, index?: number, isInternal?: boolean);
 		constructor(options: VertexStuct);
-		constructor(x: any, y?: number, index?: number, isInternal: boolean = false) {
-			if (!isNaN(x))
+		constructor(p: Point, index?: number, isInternal?: boolean);
+		constructor(x: any| Point, y?: number, index: number|boolean = -1, isInternal: boolean = true) {
+			if (x instanceof Point)
 			{
+				this.x = x.x;
+				this.y = x.y;
+				this.index = arguments[1] || -1;
+				this.isInternal = arguments[2] || true;
+
+			} else if (!isNaN(x)) {
 				this.x = x;
-				if (y == undefined || index == undefined)
-					throw new Error('parameter#1, #2 must set a value.');
-				this.y = y;
-				this.index = index;
+				if (arguments.length < 2)
+					throw new Error('must set the y');
+				this.y = y!;
+				this.index = +index;
 				this.isInternal = isInternal;
 			}
 			else
@@ -33,9 +41,9 @@ namespace sharp {
 			}
 		}
 
-		public static create(x: number, y: number, index: number, isInternal?: boolean): Vertex;
+		public static create(x: number, y: number, index?: number, isInternal?: boolean): Vertex;
 		public static create(options: VertexStuct): Vertex;
-		public static create(x: any, y?: number, index?: number, isInternal: boolean = false): Vertex
+		public static create(x: any, y?: number, index: number = -1, isInternal: boolean = false): Vertex
 		{
 			return new Vertex(x, y!, index!, isInternal);
 		}
@@ -53,11 +61,12 @@ namespace sharp {
 
 	export class Vertices {
 		public items: Vertex[];
+		public body: body.Body;
 
 		constructor(path: string);
-		constructor(points: Point[]);
+		constructor(points?: Point[]);
 		constructor(vertices: Vertex[])
-		constructor(p: any)
+		constructor(p: any = '')
 		{
 			this.setTo(p);
 		}
@@ -74,6 +83,7 @@ namespace sharp {
 		{
 			let points: Point[] = [];
 			this.items = [];
+			if (!p) return this;
 			if (p instanceof String)
 			{
 				let pathPattern = /L?\s*([\-\d\.e]+)[\s,]*([\-\d\.e]+)*/ig;
@@ -144,6 +154,21 @@ namespace sharp {
 		public getAxes(): Axes
 		{
 			return new Axes(this);
+		}
+
+		public add(...vertices: Vertex[]): Vertices
+		{
+			for(let vertex of vertices)
+			{
+				vertex.index = this.length;
+				this.items.push(vertex);
+			}
+			return this;
+		}
+
+		public concat(vertices: Vertex[]): Vertices
+		{
+			return this.add(...vertices);
 		}
 
 		/**
