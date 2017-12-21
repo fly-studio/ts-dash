@@ -7,9 +7,9 @@ namespace sharp.body {
 		id?: number;
 		/**
 		 * 刚体类型 ['body']
-		 * 比如：Rectange/Circle/Ellipse
+		 * 比如：'body', 'composite'
 		 */
-		type: string;
+		type?: string;
 		/**
 		 * 刚体标签，自定义用
 		 */
@@ -44,7 +44,7 @@ namespace sharp.body {
 		 * 比如：Rectange/Circle/Ellipse
 		 */
 		public get type(): string {
-			return this.options.type;
+			return this.options.type!;
 		}
 
 		/* public set type(value: string) {

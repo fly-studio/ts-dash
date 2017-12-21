@@ -65,7 +65,7 @@ namespace sharp {
 		group?: number;
 	}
 
-	export interface BodyOptions extends body.Options {
+	export interface BodyExtraOptions {
 
 		/**
 		 * 刚性复合体的零件刚体合集
@@ -94,7 +94,7 @@ namespace sharp {
 		/**
 		 * 瞬时速度 [x: 0, y: 0]
 		 */
-		velocity: Vector;
+		velocity?: Vector;
 		/**
 		 * 半径
 		 * 如果是圆，传递这个参数
@@ -190,6 +190,10 @@ namespace sharp {
 		 * 渲染参数
 		 */
 		render?: BodyRenderOptions;
+	}
+
+	export interface BodyOptions extends body.Options, BodyExtraOptions {
+
 	}
 	/**
 	 * 刚体类
@@ -917,7 +921,7 @@ namespace sharp {
 		 * @param {bool} [isNonColliding=false]
 		 * @return {Number} Unique group index
 		 */
-		public nextGroup(isNonColliding: boolean = false) {
+		public static nextGroup(isNonColliding: boolean = false) {
 			if (isNonColliding)
 				return Body._nextNonCollidingGroupId--;
 
@@ -930,7 +934,7 @@ namespace sharp {
 		 * @method nextCategory
 		 * @return {Number} Unique category bitfield
 		 */
-		public nextCategory() {
+		public static nextCategory() {
 			Body._nextCategory = Body._nextCategory << 1;
 			return Body._nextCategory;
 		}
@@ -1422,6 +1426,153 @@ namespace sharp {
 			properties.centre.divide(properties.mass!);
 
 			return properties;
+		}
+
+		/**
+		 * Creates a body using the supplied vertices (or an array containing multiple sets of vertices).
+		 * If the vertices are convex, they will pass through as supplied.
+		 * Otherwise if the vertices are concave, they will be decomposed if [poly-decomp.js](https://github.com/schteppe/poly-decomp.js) is available.
+		 * Note that this process is not guaranteed to support complex sets of vertices (e.g. those with holes may fail).
+		 * By default the decomposition will discard collinear edges (to improve performance).
+		 * It can also optionally discard any parts that have an area less than `minimumArea`.
+		 * If the vertices can not be decomposed, the result will fall back to using the convex hull.
+		 * The options parameter is an object that specifies any `Matter.Body` properties you wish to override the defaults.
+		 * See the properties section of the `Matter.Body` module for detailed information on what you can pass via the `options` object.
+		 * @method createFromVertices
+		 * @param {number} x 质心x
+		 * @param {number} y 质心y
+		 * @param {Vertices[]} vertexSets
+		 * @param {bool} [flagInternal=false]
+		 * @param {number} [removeCollinear=0.01]
+		 * @param {number} [minimumArea=10]
+		 * @return {body}
+		 */
+		public static createFromVertices(x: number, y: number, vertexSets: Vertices[], options?: BodyOptions, flagInternal: boolean = false, removeCollinear: number|boolean = 0.01, minimumArea: number = 10): Body
+		{
+			let body: Body,
+				parts: BodyOptions[] = [],
+				bodies: Body[] = [],
+				isConvex: boolean,
+				vertices: Vertices,
+				i: number,
+				j: number,
+				k: number,
+				v: number,
+				z: number;
+
+			if (window['decomp'] == undefined)
+				console.warn('Body.createFromVertices: poly-decomp.js required. Could not decompose vertices. Fallback to convex hull.')
+
+			for (v = 0; v < vertexSets.length; v += 1) {
+				vertices = vertexSets[v];
+				isConvex = !!vertices.isConvex();
+
+				if (isConvex || !window['decomp']) {
+					if (isConvex) {
+						vertices.clockwiseSort();
+					} else {
+						// fallback to convex hull when decomposition is not possible
+						vertices.hull();
+					}
+
+					parts.push({
+						position: new Point(x, y),
+						vertices: vertices
+					});
+				} else {
+					let decomp = window['decomp'];
+					// initialise a decomposition
+					let concave = vertices.items.map(function (vertex) {
+						return [vertex.x, vertex.y];
+					});
+
+					// vertices are concave and simple, we can decompose into parts
+					decomp.makeCCW(concave);
+					if (removeCollinear !== false)
+						decomp.removeCollinearPoints(concave, removeCollinear);
+
+					// use the quick decomposition algorithm (Bayazit)
+					let decomposed = decomp.quickDecomp(concave);
+
+					// for each decomposed chunk
+					for (i = 0; i < decomposed.length; i++) {
+						let chunk = decomposed[i];
+
+						// convert vertices into the correct structure
+						let chunkVertices: Vertices = new Vertices(chunk.map(function (vertex: number[]) {
+							return new Point(
+								vertex[0],
+								vertex[1]
+							);
+						}) as Point[]);
+
+
+						// skip small chunks
+						if (minimumArea > 0 && chunkVertices.area() < minimumArea)
+							continue;
+
+						// create a compound part
+						parts.push({
+							position: chunkVertices.centre(),
+							vertices: chunkVertices
+						});
+					}
+				}
+			}
+
+			// create body parts
+			for (i = 0; i < parts.length; i++) {
+				bodies.push(new Body(object.extend(parts[i], options)))
+			}
+
+			// flag internal edges (coincident part edges)
+			if (flagInternal) {
+				let coincident_max_dist: number = 5;
+
+				for (i = 0; i < bodies.length; i++) {
+					let bodyA = bodies[i];
+
+					for (j = i + 1; j < bodies.length; j++) {
+						let bodyB = bodies[j];
+
+						if (bodyA.bounds.overlaps(bodyB.bounds)) {
+							let pav = bodyA.vertices,
+								pbv = bodyB.vertices;
+
+							// iterate vertices of both parts
+							for (k = 0; k < bodyA.vertices.length; k++) {
+								for (z = 0; z < bodyB.vertices.length; z++) {
+									// find distances between the vertices
+
+									let pk = pav.at(k),
+										pk1 = pav.at((k + 1) % pav.length),
+										pz = pbv.at(z),
+										pz1 = pbv.at((z + 1) % pbv.length),
+										da = pk1.clone().subtract(pz.x, pz.y).getMagnitudeSquared(),
+										db = pk.clone().subtract(pz1.x, pz1.y).getMagnitudeSquared();
+
+									// if both vertices are very close, consider the edge concident (internal)
+									if (da < coincident_max_dist && db < coincident_max_dist) {
+										pk.isInternal = true;
+										pz.isInternal = true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (bodies.length > 1) {
+				// create the parent body to be returned, that contains generated compound parts
+				body = bodies[0];
+				body.set(options);
+				body.setPosition(new Point(x, y));
+
+				return body;
+			} else {
+				return bodies[0];
+			}
 		}
 	}
 }

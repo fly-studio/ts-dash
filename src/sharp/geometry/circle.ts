@@ -34,6 +34,11 @@ namespace sharp {
 			this.radius = value * 2;
 		}
 
+		public get point(): Point
+		{
+			return new Point(this.x, this.y);
+		}
+
 		public get centerPoint(): Point
 		{
 			return new Point(this.x, this.y);
@@ -207,6 +212,16 @@ namespace sharp {
 			return new Circle(this.x, this.y, this.diameter);
 		}
 
+		public toBody(options: any, maxsides?: number): Body
+		{
+			options.label = options.label || 'Circle';
+			options.type = 'Circle Body';
+			options.circleRadius = this.centerPoint;
+			options.vertices = this.vertices(maxsides);
+			options.position = this.point;
+
+			return new Body(options as BodyOptions);
+		}
 
 		public static create(p: Point, diameter?: number): Circle;
 		public static create(x?: number, y?: number, radius?: number): Circle;

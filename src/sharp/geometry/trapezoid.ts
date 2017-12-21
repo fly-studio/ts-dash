@@ -1,4 +1,7 @@
 namespace sharp {
+	/**
+	 * 梯形/三角形
+	 */
 	export class Trapezoid extends Polygon {
 		public x: number;
 		public y: number;
@@ -25,6 +28,11 @@ namespace sharp {
 				this.setToTrapezoid(x, y, width, height);
 			else
 				this.setToTrapezoid(x, y, width, height, slope!);
+		}
+
+		public get point(): Point
+		{
+			return new Point(this.x, this.y);
 		}
 
 		public setToTrapezoid(p: Point, width: number, height: number, slope: number): Trapezoid;
@@ -61,6 +69,15 @@ namespace sharp {
 
 		public clone(): Trapezoid {
 			return new Trapezoid(this.x, this.y, this.width, this.height, this.slope);
+		}
+
+		public toBody(options: any): Body
+		{
+			options.label = options.label || 'Trapezoid';
+			options.vertices = this.vertices();
+			options.position = this.point;
+
+			return new Body(options as BodyOptions);
 		}
 
 		public vertices() {

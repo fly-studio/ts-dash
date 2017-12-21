@@ -1,4 +1,7 @@
 namespace sharp {
+	/**
+	 * 标准多边形
+	 */
 	export class RigidPolygon extends Polygon {
 		public x: number;
 		public y: number;
@@ -23,6 +26,11 @@ namespace sharp {
 				this.setToRigid(x, y, sides);
 			else
 				this.setToRigid(x, y, sides, radius!);
+		}
+
+		public get centerPoint(): Point
+		{
+			return new Point(this.x, this.y);
 		}
 
 		public setToRigid(p: Point, sides: number, radius: number): RigidPolygon;
@@ -65,6 +73,16 @@ namespace sharp {
 			return new RigidPolygon(this.x, this.y, this.sides, this.radius);
 		}
 
+		public toBody(options: any): Body
+		{
+			options.label = options.label || 'RigidPolygon';
+			options.type = 'RigidPolygon Body';
+			options.vertices = this.vertices();
+			options.position = this.centerPoint;
+
+			return new Body(options as BodyOptions);
+		}
+
 		public vertices()
 		{
 			return super.vertices(this.x, this.y);
@@ -83,6 +101,14 @@ namespace sharp {
 			return points;
 		}
 
+		/**
+		 * Returns a string representation of this object.
+		 * @method sharp.RigidPolygon#toString
+		 * @return {string} A string representation of the instance.
+		 */
+		public toString() {
+			return "[{sharp.RigidPolygon (x=" + this.x + " y=" + this.y + " radius=" + this.radius + " sides=" + this.sides + ")}]";
+		}
 	}
 
 }

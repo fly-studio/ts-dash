@@ -101,6 +101,11 @@ namespace sharp {
 			}
 		}
 
+		public get point(): Point
+		{
+			return new Point(this.x, this.y);
+		}
+
 		/**
 		 * The location of the Rectangles top left corner as a Point object.
 		 * @name sharp.Rectangle#topLeft
@@ -328,6 +333,15 @@ namespace sharp {
 		public clone(): Rectangle
 		{
 			return new Rectangle(this.x, this.y, this.width, this.height);
+		}
+
+		public toBody(options: any): Body
+		{
+			options.label = options.label || 'Rectangle';
+			options.vertices = this.vertices();
+			options.position = this.point;
+
+			return new Body(options as BodyOptions);
 		}
 
 		public static create(x: number = 0, y: number = 0, width: number = 0, height: number = 0)

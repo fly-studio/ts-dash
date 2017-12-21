@@ -1,4 +1,7 @@
 namespace sharp {
+	/**
+	 * 椭圆
+	 */
 	export class Ellipse {
 		public x: number;
 		public y: number;
@@ -84,6 +87,11 @@ namespace sharp {
 			} else {
 				this.height = value - this.y;
 			}
+		}
+
+		public get point(): Point
+		{
+			return new Point(this.x, this.y);
 		}
 
 		/**
@@ -178,7 +186,15 @@ namespace sharp {
 			return new Ellipse(this.x, this.y, this.width, this.height);
 		}
 
+		public toBody(options: any): Body
+		{
+			options.label = options.label || 'Ellipse';
+			options.type = 'Ellipse Body';
+			options.vertices = this.vertices();
+			options.position = this.point;
 
+			return new Body(options as BodyOptions);
+		}
 
 		public static create(p: Point, width: number, height: number): Ellipse;
 		public static create(x?: number, y?: number, width?: number, height?: number): Ellipse;
@@ -190,6 +206,10 @@ namespace sharp {
 				return new Ellipse(x, y, width, height);
 		}
 
+		public vertices(maxSides: number = 25): Vertices
+		{
+			return new Vertices;
+		}
 
 		/**
 		 * Return true if the given x/y coordinates are within this Ellipse object.
@@ -220,11 +240,11 @@ namespace sharp {
 		 * @method sharp.Ellipse#random
 		 * @return {sharp.Point} An object containing the random point in its `x` and `y` properties.
 		 */
-		public random(): Point {
-
+		public random(): Point
+		{
 			let out = new Point();
 
-        	let p = Math.random() * Math.PI * 2;
+			let p = Math.random() * Math.PI * 2;
 			let r = Math.random();
 
 			out.x = Math.sqrt(r) * Math.cos(p);
@@ -234,7 +254,6 @@ namespace sharp {
 			out.y = this.y + (out.y * this.height / 2.0);
 
 			return out;
-
 		}
 
 		/**

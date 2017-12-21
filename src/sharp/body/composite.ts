@@ -1,10 +1,14 @@
 namespace sharp {
 
-	export interface CompositeOptions extends body.Options {
+	export interface CompositeExtraOptions {
 		isModified?: boolean;
 		bodies?: Body[];
 		constraints?: Constraint[];
 		composites?: Composite[];
+	}
+
+	export interface CompositeOptions extends body.Options, CompositeExtraOptions {
+
 	}
 	/**
 	 * 复合体类
@@ -34,6 +38,24 @@ namespace sharp {
 
 		public set parent(value: Composite) {
 			this.options.parent = value;
+		}
+
+		/**
+		 * Returns the union of the bounds of all of the composite's bodies.
+		 * @method bounds The composite.
+		 * @returns {bounds} The composite bounds.
+		 */
+		public get bounds(): Bounds
+		{
+			let bodies = this.allBodies(),
+				vertices = new Vertices;
+
+			for (let i = 0; i < bodies.length; i += 1) {
+				let body = bodies[i];
+				vertices.add(new Vertex(body.bounds.min), new Vertex(body.bounds.max));
+			}
+
+			return vertices.getBounds();
 		}
 
 		protected defaultOptions(): CompositeOptions {
@@ -93,11 +115,11 @@ namespace sharp {
 							break;
 						}
 						this.addBody(obj);
-				} else if (obj instanceof constraint.Constraint) {
+				} else if (obj instanceof Constraint) {
 						this.addConstraint(obj);
 				} else if (obj instanceof Composite) {
 						this.addComposite(obj);
-				} else if (obj instanceof constraint.MouseConstraint) {
+				} else if (obj instanceof MouseConstraint) {
 						this.addConstraint(obj.constraint);
 				}
 			}
@@ -124,11 +146,11 @@ namespace sharp {
 
 				if (obj instanceof Body) {
 					this.removeBody(obj, deep);
-				} else if (obj instanceof constraint.Constraint) {
+				} else if (obj instanceof Constraint) {
 					this.removeConstraint(obj, deep);
 				} else if (obj instanceof Composite) {
 					this.removeComposite(obj, deep);
-				} else if (obj instanceof constraint.MouseConstraint) {
+				} else if (obj instanceof MouseConstraint) {
 					this.removeConstraint(obj.constraint);
 				}
 			}
@@ -249,7 +271,7 @@ namespace sharp {
 		 * @param {constraint} constraint
 		 * @return {composite} The original composite with the constraint added
 		 */
-		public addConstraint(constraint: constraint.Constraint): Composite
+		public addConstraint(constraint: Constraint): Composite
 		{
 			this.constraints.push(constraint);
 			this.setModified(true, true, false);
@@ -264,7 +286,7 @@ namespace sharp {
 		 * @param {boolean} [deep=false]
 		 * @return {composite} The original composite with the constraint removed
 		 */
-		public removeConstraint(constraint: constraint.Constraint, deep: boolean): Composite {
+		public removeConstraint(constraint: Constraint, deep: boolean): Composite {
 			let position = this.constraints.indexOf(constraint);
 			if (position !== -1) {
 				this.removeConstraintAt(position);
@@ -341,9 +363,9 @@ namespace sharp {
 		 * @method allConstraints
 		 * @return {constraint[]} All the constraints
 		 */
-		public allConstraints(): constraint.Constraint[]
+		public allConstraints(): Constraint[]
 		{
-			let constraints: constraint.Constraint[] = [...this.constraints];
+			let constraints: Constraint[] = [...this.constraints];
 
 			for (let i = 0; i < this.composites.length; i++)
 				constraints = constraints.concat(this.composites[i].allConstraints());
@@ -462,7 +484,8 @@ namespace sharp {
 		 * @param {vector} point
 		 * @param {bool} [recursive=true]
 		 */
-		public rotate(rotation: number, point: Point, recursive: boolean = true) {
+		public rotate(rotation: number, point: Point, recursive: boolean = true): Composite
+		{
 			let cos = Math.cos(rotation),
 				sin = Math.sin(rotation),
 				bodies = recursive ? this.allBodies() : this.bodies;
@@ -516,21 +539,314 @@ namespace sharp {
 		}
 
 		/**
-		 * Returns the union of the bounds of all of the composite's bodies.
-		 * @method bounds The composite.
-		 * @returns {bounds} The composite bounds.
+		 * Chains all bodies in the given composite together using constraints.
+		 * @method setChain
+		 * @param {number} xOffsetA
+		 * @param {number} yOffsetA
+		 * @param {number} xOffsetB
+		 * @param {number} yOffsetB
+		 * @param {object} options
+		 * @return {composite} A new composite containing objects chained together with constraints
 		 */
-		public get bounds(): Bounds
+		public setChain(xOffsetA: number, yOffsetA: number, xOffsetB: number, yOffsetB: number, options: any): Composite
 		{
-			let bodies = this.allBodies(),
-				vertices = new Vertices;
+			let bodies = this.bodies;
 
-			for (let i = 0; i < bodies.length; i += 1) {
-				let body = bodies[i];
-				vertices.add(new Vertex(body.bounds.min), new Vertex(body.bounds.max));
+			for (let i = 1; i < bodies.length; i++) {
+				let bodyA = bodies[i - 1],
+					bodyB = bodies[i],
+					bodyAHeight = bodyA.bounds.max.y - bodyA.bounds.min.y,
+					bodyAWidth = bodyA.bounds.max.x - bodyA.bounds.min.x,
+					bodyBHeight = bodyB.bounds.max.y - bodyB.bounds.min.y,
+					bodyBWidth = bodyB.bounds.max.x - bodyB.bounds.min.x;
+
+				let defaults = {
+					bodyA: bodyA,
+					pointA: new Point(bodyAWidth * xOffsetA, bodyAHeight * yOffsetA),
+					bodyB: bodyB,
+					pointB: new Point(bodyBWidth * xOffsetB, bodyBHeight * yOffsetB)
+				};
+
+				let constraint = object.extend(defaults, options);
+
+				this.addConstraint(new Constraint(constraint));
 			}
 
-			return vertices.getBounds();;
+			this.label += ' Chain';
+
+			return this;
+		};
+
+		/**
+		 * Connects bodies in the composite with constraints in a grid pattern, with optional cross braces.
+		 * @method createMesh
+		 * @param {number} columns
+		 * @param {number} rows
+		 * @param {boolean} crossBrace
+		 * @param {object} options
+		 * @return {composite} The composite containing objects meshed together with constraints
+		 */
+		public setMesh(columns: number, rows: number, crossBrace: boolean, options: any): Composite
+		{
+			let bodies = this.bodies,
+				row: number,
+				col: number,
+				bodyA: Body,
+				bodyB: Body,
+				bodyC: Body;
+
+			for (row = 0; row < rows; row++) {
+				for (col = 1; col < columns; col++) {
+					bodyA = bodies[(col - 1) + (row * columns)];
+					bodyB = bodies[col + (row * columns)];
+					this.addConstraint(new Constraint(object.extend({ bodyA: bodyA, bodyB: bodyB }, options)));
+				}
+
+				if (row > 0) {
+					for (col = 0; col < columns; col++) {
+						bodyA = bodies[col + ((row - 1) * columns)];
+						bodyB = bodies[col + (row * columns)];
+						this.addConstraint(new Constraint(object.extend({ bodyA: bodyA, bodyB: bodyB }, options)));
+
+						if (crossBrace && col > 0) {
+							bodyC = bodies[(col - 1) + ((row - 1) * columns)];
+							this.addConstraint(new Constraint(object.extend({ bodyA: bodyC, bodyB: bodyB }, options)));
+						}
+
+						if (crossBrace && col < columns - 1) {
+							bodyC = bodies[(col + 1) + ((row - 1) * columns)];
+							this.addConstraint(new Constraint(object.extend({ bodyA: bodyC, bodyB: bodyB }, options)));
+						}
+					}
+				}
+			}
+
+			this.label += ' Mesh';
+
+			return this;
 		}
+
+
+		/**
+		 * Create a new composite containing bodies created in the callback in a grid arrangement.
+		 * This function uses the body's bounds to prevent overlaps.
+		 * @method createStack
+		 * @param {number} xx
+		 * @param {number} yy
+		 * @param {number} columns
+		 * @param {number} rows
+		 * @param {number} columnGap
+		 * @param {number} rowGap
+		 * @param {function} callback
+		 * @return {composite} A new composite containing objects created in the callback
+		 */
+		public static createStack(xx: number, yy: number, columns: number, rows: number, columnGap: number, rowGap: number, callback: (x: number, y: number, column: number, row: number, lastBody: Body|null, i: number) => Body|null): Composite
+		{
+			let stack = new Composite({ label: 'Stack' }),
+				x: number = xx,
+				y: number = yy,
+				lastBody: Body|null = null,
+				i = 0;
+
+			for (let row = 0; row < rows; row++) {
+				let maxHeight = 0;
+
+				for (let column = 0; column < columns; column++) {
+					let body = callback(x, y, column, row, lastBody, i);
+
+					if (body) {
+						let bodyHeight = body.bounds.max.y - body.bounds.min.y,
+							bodyWidth = body.bounds.max.x - body.bounds.min.x;
+
+						if (bodyHeight > maxHeight)
+							maxHeight = bodyHeight;
+
+						body.translate(new Point(bodyWidth * 0.5, bodyHeight * 0.5));
+
+						x = body.bounds.max.x + columnGap;
+
+						stack.addBody(body);
+
+						lastBody = body;
+						i += 1;
+					} else {
+						x += columnGap;
+					}
+				}
+
+				y += maxHeight + rowGap;
+				x = xx;
+			}
+
+			return stack;
+		}
+
+		/**
+		 * Create a new composite containing bodies created in the callback in a pyramid arrangement.
+		 * This function uses the body's bounds to prevent overlaps.
+		 * @method createPyramid
+		 * @param {number} xx
+		 * @param {number} yy
+		 * @param {number} columns
+		 * @param {number} rows
+		 * @param {number} columnGap
+		 * @param {number} rowGap
+		 * @param {function} callback
+		 * @return {composite} A new composite containing objects created in the callback
+		 */
+		public static createPyramid(xx: number, yy: number, columns: number, rows: number, columnGap: number, rowGap: number, callback: (x: number, y: number, column: number, row: number, lastBody: Body|null, i: number) => Body|null): Composite
+		{
+			return Composite.createStack(xx, yy, columns, rows, columnGap, rowGap, function(x, y, column, row, lastBody, i) {
+				let actualRows: number = Math.min(rows, Math.ceil(columns / 2)),
+					lastBodyWidth: number = lastBody ? lastBody.bounds.max.x - lastBody.bounds.min.x : 0;
+
+				if (row > actualRows)
+					return null;
+
+				// reverse row order
+				row = actualRows - row;
+
+				let start: number = row,
+					end: number = columns - 1 - row;
+
+				if (column < start || column > end)
+					return null;
+
+				// retroactively fix the first body's position, since width was unknown
+				if (i === 1 && lastBody) {
+					lastBody.translate(new Point((column + (columns % 2 === 1 ? 1 : -1)) * lastBodyWidth, 0));
+				}
+
+				let xOffset = lastBody ? column * lastBodyWidth : 0;
+
+				return callback(xx + xOffset + column * columnGap, y, column, row, lastBody, i);
+			});
+		}
+
+		/**
+		 * Creates a composite with a Newton's Cradle setup of bodies and constraints.
+		 * @method createNewtonsCradle
+		 * @param {number} xx
+		 * @param {number} yy
+		 * @param {number} number
+		 * @param {number} size
+		 * @param {number} length
+		 * @return {composite} A new composite newtonsCradle body
+		 */
+		public static createNewtonsCradle(xx: number, yy: number, number: number, size: number, length: number): Composite
+		{
+			let newtonsCradle = new Composite({ label: 'Newtons Cradle' });
+
+			for (let i = 0; i < number; i++) {
+				let separation: number = 1.9,
+					circle = new Circle(xx + i * (size * separation), yy + length, size).toBody({ inertia: Infinity, restitution: 1, friction: 0, frictionAir: 0.0001, slop: 1 }),
+					constraint = new Constraint({ pointA: new Point(xx + i * (size * separation), yy), bodyB: circle});
+
+				newtonsCradle.addBody(circle);
+				newtonsCradle.addConstraint(constraint);
+			}
+
+			return newtonsCradle;
+		}
+
+		/**
+		 * Creates a composite with simple car setup of bodies and constraints.
+		 * @method createCar
+		 * @param {number} xx
+		 * @param {number} yy
+		 * @param {number} width
+		 * @param {number} height
+		 * @param {number} wheelSize
+		 * @return {composite} A new composite car body
+		 */
+		public static createCar(xx: number, yy: number, width: number, height: number, wheelSize: number): Composite
+		{
+			let group: number = Body.nextGroup(true),
+				wheelBase: number = 20,
+				wheelAOffset: number = -width * 0.5 + wheelBase,
+				wheelBOffset: number = width * 0.5 - wheelBase,
+				wheelYOffset: number = 0;
+
+			let car = new Composite({ label: 'Car' }),
+				body = new Rectangle(xx, yy, width, height).toBody({
+					collisionFilter: {
+						group: group
+					},
+					chamfer: {
+						radius: height * 0.5
+					},
+					density: 0.0002
+				});
+
+			let wheelA = new Circle(xx + wheelAOffset, yy + wheelYOffset, wheelSize).toBody({
+				collisionFilter: {
+					group: group
+				},
+				friction: 0.8
+			});
+
+			let wheelB = new Circle(xx + wheelBOffset, yy + wheelYOffset, wheelSize).toBody({
+				collisionFilter: {
+					group: group
+				},
+				friction: 0.8
+			});
+
+			let axelA = new Constraint({
+				bodyB: body,
+				pointB: new Point(wheelAOffset, wheelYOffset),
+				bodyA: wheelA,
+				stiffness: 1,
+				length: 0
+			});
+
+			let axelB = new Constraint({
+				bodyB: body,
+				pointB: new Point(wheelBOffset, wheelYOffset),
+				bodyA: wheelB,
+				stiffness: 1,
+				length: 0
+			});
+
+			car.addBody(body);
+			car.addBody(wheelA);
+			car.addBody(wheelB);
+			car.addConstraint(axelA);
+			car.addConstraint(axelB);
+
+			return car;
+		}
+
+		/**
+		 * Creates a simple soft body like object.
+		 * @method createSoftBody
+		 * @param {number} xx
+		 * @param {number} yy
+		 * @param {number} columns
+		 * @param {number} rows
+		 * @param {number} columnGap
+		 * @param {number} rowGap
+		 * @param {boolean} crossBrace
+		 * @param {number} particleRadius
+		 * @param {} particleOptions
+		 * @param {} constraintOptions
+		 * @return {composite} A new composite softBody
+		 */
+		public static createSoftBody(xx: number, yy: number, columns: number, rows: number, columnGap: number, rowGap: number, crossBrace: boolean, particleRadius: number, particleOptions: any, constraintOptions: any): Composite
+		{
+			particleOptions = object.extend({ inertia: Infinity }, particleOptions);
+			constraintOptions = object.extend({ stiffness: 0.2, render: { type: 'line', anchors: false } }, constraintOptions);
+
+			let softBody = Composite.createStack(xx, yy, columns, rows, columnGap, rowGap, function(x, y) {
+				return new Circle(x, y, particleRadius).toBody(particleOptions);
+			});
+
+			softBody.setMesh(columns, rows, crossBrace, constraintOptions);
+
+			softBody.label = 'Soft Body';
+
+			return softBody;
+		}
+
 	}
 }

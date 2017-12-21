@@ -124,6 +124,16 @@ namespace sharp {
 			return new Polygon(points);
 		}
 
+		public toBody(options: any, x: number, y: number): Body
+		{
+			options.label = options.label || 'Polygon';
+			options.type = 'Polygon Body';
+			options.vertices = this.vertices(x, y);
+			options.position = new Point(x, y);
+
+			return new Body(options as BodyOptions);
+		}
+
 		public static create(xy: number[]): Polygon;
 		public static create(points: Point[]): Polygon;
 		public static create(x: number, y: number, ...args: number[]): Polygon;
@@ -248,140 +258,5 @@ namespace sharp {
 			return this;
 		}
 
-		/**
-		 * Creates a body using the supplied vertices (or an array containing multiple sets of vertices).
-		 * If the vertices are convex, they will pass through as supplied.
-		 * Otherwise if the vertices are concave, they will be decomposed if [poly-decomp.js](https://github.com/schteppe/poly-decomp.js) is available.
-		 * Note that this process is not guaranteed to support complex sets of vertices (e.g. those with holes may fail).
-		 * By default the decomposition will discard collinear edges (to improve performance).
-		 * It can also optionally discard any parts that have an area less than `minimumArea`.
-		 * If the vertices can not be decomposed, the result will fall back to using the convex hull.
-		 * The options parameter is an object that specifies any `Matter.Body` properties you wish to override the defaults.
-		 * See the properties section of the `Matter.Body` module for detailed information on what you can pass via the `options` object.
-		 * @method fromVertices
-		 * @param {number} x 质心x
-		 * @param {number} y 质心y
-		 * @param {bool} [flagInternal=false]
-		 * @param {number} [removeCollinear=0.01]
-		 * @param {number} [minimumArea=10]
-		 * @return {body}
-		 */
-		public vertices(x: number, y: number, flagInternal: boolean = false, removeCollinear: number|boolean = 0.01, minimumArea: number = 10)
-		{
-			/* let body,
-				parts = [],
-				isConvex: boolean,
-				vertices: Vertices,
-				i,
-				j,
-				k,
-				v: number,
-				z;
-
-			for (v = 0; v < this.polygons.length; v += 1) {
-				vertices = this.polygons[v].vertices();
-				isConvex = !!vertices.isConvex();
-
-				if (isConvex || !window['decomp']) {
-					if (isConvex) {
-						vertices.clockwiseSort();
-					} else {
-						// fallback to convex hull when decomposition is not possible
-						vertices.hull();
-					}
-
-					parts.push({
-						position: { x: x, y: y },
-						vertices: vertices
-					});
-				} else {
-					let decomp = window['decomp'];
-					// initialise a decomposition
-					let concave = vertices.items.map(function (vertex) {
-						return [vertex.x, vertex.y];
-					});
-
-					// vertices are concave and simple, we can decompose into parts
-					decomp.makeCCW(concave);
-					if (removeCollinear !== false)
-						decomp.removeCollinearPoints(concave, removeCollinear);
-
-					// use the quick decomposition algorithm (Bayazit)
-					let decomposed = decomp.quickDecomp(concave);
-
-					// for each decomposed chunk
-					for (i = 0; i < decomposed.length; i++) {
-						let chunk = decomposed[i];
-
-						// convert vertices into the correct structure
-						let chunkVertices: Vertices = chunk.map(function (vertex: number[]) {
-							return {
-								x: vertex[0],
-								y: vertex[1]
-							};
-						});
-
-						// skip small chunks
-						if (minimumArea > 0 && chunkVertices.area() < minimumArea)
-							continue;
-
-						// create a compound part
-						parts.push({
-							position: chunkVertices.centre(),
-							vertices: chunkVertices
-						});
-					}
-				}
-			}
-
-			// create body parts
-			for (i = 0; i < parts.length; i++) {
-				parts[i] = Body.create(Common.extend(parts[i], options));
-			}
-
-			// flag internal edges (coincident part edges)
-			if (flagInternal) {
-				let coincident_max_dist = 5;
-
-				for (i = 0; i < parts.length; i++) {
-					let partA = parts[i];
-
-					for (j = i + 1; j < parts.length; j++) {
-						let partB = parts[j];
-
-						if (Bounds.overlaps(partA.bounds, partB.bounds)) {
-							let pav = partA.vertices,
-								pbv = partB.vertices;
-
-							// iterate vertices of both parts
-							for (k = 0; k < partA.vertices.length; k++) {
-								for (z = 0; z < partB.vertices.length; z++) {
-									// find distances between the vertices
-									let da = Vector.magnitudeSquared(Vector.sub(pav[(k + 1) % pav.length], pbv[z])),
-										db = Vector.magnitudeSquared(Vector.sub(pav[k], pbv[(z + 1) % pbv.length]));
-
-									// if both vertices are very close, consider the edge concident (internal)
-									if (da < coincident_max_dist && db < coincident_max_dist) {
-										pav[k].isInternal = true;
-										pbv[z].isInternal = true;
-									}
-								}
-							}
-
-						}
-					}
-				}
-			}
-
-			if (parts.length > 1) {
-				// create the parent body to be returned, that contains generated compound parts
-				body = Body.create(Common.extend({ parts: parts.slice(0) }, options));
-				Body.setPosition(body, { x: x, y: y });
-
-				return body;
-			} else {
-				return parts[0];
-			}*/
-		}
 	}
 }
