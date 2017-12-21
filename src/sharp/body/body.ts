@@ -1,7 +1,7 @@
-namespace sharp.body {
+namespace sharp {
 	import Vector = sharp.Point;
 
-	export interface RenderOptions {
+	export interface BodyRenderOptions {
 		/**
 		 * 是否显示 [true]
 		 */
@@ -65,7 +65,7 @@ namespace sharp.body {
 		group?: number;
 	}
 
-	export interface BodyOptions extends Options {
+	export interface BodyOptions extends body.Options {
 
 		/**
 		 * 刚性复合体的零件刚体合集
@@ -189,13 +189,13 @@ namespace sharp.body {
 		/**
 		 * 渲染参数
 		 */
-		render?: RenderOptions;
+		render?: BodyRenderOptions;
 	}
 	/**
 	 * 刚体类
 	 */
-	export class Body extends Base {
-		protected options: body.BodyOptions;
+	export class Body extends body.Base {
+		protected options: BodyOptions;
 		/**
 		 * 初始角度，默认等于angle
 		 */
@@ -263,7 +263,7 @@ namespace sharp.body {
 		protected static _nextCategory: number = 0x0001;
 		protected static _inertiaScale: number = 4;
 
-		constructor(options: body.BodyOptions)
+		constructor(options: BodyOptions)
 		{
 			super();
 			this.options = object.extend(this.defaultOptions(), options);
@@ -749,15 +749,15 @@ namespace sharp.body {
 		/**
 		 * 渲染参数
 		 */
-		public get render(): RenderOptions {
+		public get render(): BodyRenderOptions {
 			return this.options.render!;
 		}
 
-		public set render(value: RenderOptions) {
+		public set render(value: BodyRenderOptions) {
 			this.options.render = value;
 		}
 
-		protected defaultOptions(): body.BodyOptions {
+		protected defaultOptions(): BodyOptions {
 			return {
 				id: common.nextId(),
 				type: 'body',

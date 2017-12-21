@@ -25,7 +25,7 @@ namespace sharp.body {
 	}
 
 	export abstract class Base {
-		protected options: body.Options;
+		protected options: Options;
 		public events: Object;
 		/**
 		 * ID 唯一值，自增，只读

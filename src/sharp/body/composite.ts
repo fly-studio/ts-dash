@@ -1,22 +1,27 @@
-namespace sharp.body {
+namespace sharp {
 
-	export interface CompositeOptions extends Options {
+	export interface CompositeOptions extends body.Options {
 		isModified?: boolean;
 		bodies?: Body[];
-		constraints?: constraint.Constraint[];
+		constraints?: Constraint[];
 		composites?: Composite[];
 	}
 	/**
 	 * 复合体类
 	 */
-	export class Composite extends Base {
-		protected options: body.CompositeOptions;
+	export class Composite extends body.Base {
+		protected options: CompositeOptions;
 		protected isModified: boolean = false;
+		public bodies: Body[] = [];
+		public constraints: Constraint[] = [];
+		public composites: Composite[] = [];
 
 		constructor(options: CompositeOptions)
 		{
 			super();
-
+			if (options.bodies) {this.bodies = options.bodies; delete options.bodies;}
+			if (options.constraints) {this.constraints = options.constraints; delete options.constraints;}
+			if (options.composites) {this.composites = options.composites; delete options.composites;}
 			this.options = object.extend(this.defaultOptions(), options);
 		}
 
@@ -31,27 +36,11 @@ namespace sharp.body {
 			this.options.parent = value;
 		}
 
-		public get bodies(): Body[] {
-			return this.options.bodies! || [];
-		}
-
-		public get constraints(): constraint.Constraint[] {
-			return this.options.constraints! || [];
-		}
-
-		public get composites(): Composite[] {
-			return this.options.composites! || [];
-		}
-
 		protected defaultOptions(): CompositeOptions {
 			return {
 				id: common.nextId(),
 				type: 'composite',
 				parent: null,
-				isModified: false,
-				bodies: [],
-				constraints: [],
-				composites: [],
 				label: 'Composite',
 				plugin: {}
 			};

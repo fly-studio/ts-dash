@@ -1,4 +1,4 @@
-namespace sharp.constraint {
+namespace sharp {
 	export class MouseConstraint {
 
 	}

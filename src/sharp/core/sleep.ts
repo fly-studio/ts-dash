@@ -9,7 +9,7 @@ namespace sharp.sleeping {
      * @param {body[]} bodies
      * @param {number} timeScale
      */
-	export function update(bodies: body.Body[], timeScale: number) {
+	export function update(bodies: Body[], timeScale: number) {
 		let timeFactor = timeScale * timeScale * timeScale;
 
 		// update bodies sleeping status
@@ -82,7 +82,7 @@ namespace sharp.sleeping {
      * @param {body} body
      * @param {boolean} isSleeping
      */
-	export function set(body: body.Body, isSleeping: boolean)
+	export function set(body: Body, isSleeping: boolean)
 	{
 		let wasSleeping = body.isSleeping;
 

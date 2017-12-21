@@ -145,7 +145,7 @@ namespace sharp {
 			return this.items[index];
 		}
 
-		public setBody(body: body.Body): Vertices
+		public setBody(body: Body): Vertices
 		{
 			this.body = body;
 			return this;
