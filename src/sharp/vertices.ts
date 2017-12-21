@@ -104,14 +104,12 @@ namespace sharp {
 			}
 			for (let i = 0; i < points.length; i++) {
 				let point: Point = points[i],
-					vertex: Vertex = Vertex.create({
+					vertex: Vertex = new Vertex({
 						x: point.x,
 						y: point.y,
 						index: i,
-						//body: body,
 						isInternal: false
-					})
-
+					});
 				this.items.push(vertex);
 			}
 			return this;
@@ -129,6 +127,7 @@ namespace sharp {
 		{
 			let vertices: Vertices = new Vertices([]);
 			vertices.items = this.cloneItems();
+			vertices.body = this.body;
 			return vertices;
 		}
 
@@ -144,6 +143,12 @@ namespace sharp {
 		public at(index: number)
 		{
 			return this.items[index];
+		}
+
+		public setBody(body: body.Body): Vertices
+		{
+			this.body = body;
+			return this;
 		}
 
 		public getBounds(): Bounds
@@ -164,11 +169,6 @@ namespace sharp {
 				this.items.push(vertex);
 			}
 			return this;
-		}
-
-		public concat(vertices: Vertex[]): Vertices
-		{
-			return this.add(...vertices);
 		}
 
 		/**
@@ -264,7 +264,7 @@ namespace sharp {
 		}
 
 		/**
-		 * 根据质点转换成正常坐标(原坐标都是以(0, 0)开始)
+		 * 根据质点转换成舞台坐标(原坐标都是以(0, 0)开始)
 		 * Translates the set of vertices in-place.
 		 * @method translate
 		 * @param {vector} vector

@@ -49,9 +49,9 @@ namespace sharp.body {
 
 	export interface collisionFilterOptions {
 		/**
-			 * 范围 (1, 2, 4, 8, 16, ... 2^31) [1]
-			 * 共32个不同的bitamask子掩码
-			 */
+		 * 范围 (1, 2, 4, 8, 16, ... 2^31) [1]
+		 * 共32个不同的bitamask子掩码
+		 */
 		category?: number;
 		/**
 		 * 范围 1 - 2^32 [0xFFFFFFFF]
@@ -68,7 +68,7 @@ namespace sharp.body {
 	export interface BodyOptions extends Options {
 
 		/**
-		 * 复合体的零件合集
+		 * 刚性复合体的零件刚体合集
 		 * 第0个刚体指向复合体实例
 		 * parts中所有的零件刚体组成了复合体，零件允许重叠、空隙、或孔，甚至形成凹面体
 		 * 对于复合体内的零件，不能将入World，而是在World中只加入复合体（也就是零件们的父刚体）
@@ -77,62 +77,29 @@ namespace sharp.body {
 		parts?: Body[];
 		/**
 		 * 旋转角度，单位：弧度 [0]
-		 * 如果在渲染过程中改变这个值，会造成刚体旋转，如果不希望旋转，使用Body.setAngle
+		 * 如果在渲染过程中改变这个值，会造成刚体旋转，如果不希望旋转，使用Body.setAngle赋值
 		 */
 		angle?: number;
-		/**
-		 * 初始角度，默认等于angle
-		 * 如果不等于angle，受力之后，会导致刚体旋转
-		 */
-		anglePrev?: number;
-		/**
-		 * 面积
-		 * 自动根据vertices计算
-		 * 只读
-		 */
-		area?: number;
-		/**
-		 * AABB区域
-		 * 自动根据vertices计算
-		 * Body.update中不断更新
-		 * 只读
-		 */
-		bounds?: Bounds;
-		/**
-		 * 用于碰撞检测的唯一轴坐标集合（边缘法线）
-		 * 自动根据vertices计算
-		 */
-		axes?: Axes;
 		/**
 		 * 顶点合集
 		 * 不支持凹面多边形
 		 * 这个会自动计算inertia/bounds
+		 * 使用Body.setVertices设置
 		 */
 		vertices: Vertices;
-		/**
-		 *
-		 */
-		centre?: Point;
 		/**
 		 * 质点坐标
 		 */
 		position: Point;
 		/**
-		 * 初始质点坐标，默认等于position
-		 * 如果在渲染时改变position，会导致惯性、摩擦力等特征触发，如果不希望触发，使用Body.setPostion
+		 * 瞬时速度 [x: 0, y: 0]
 		 */
-		positionPrev?: Point;
+		velocity: Vector;
 		/**
 		 * 半径
 		 * 如果是圆，传递这个参数
 		 */
 		circleRadius?: number | null;
-		/**
-		 * 施加的力向量，[x: 0, y: 0]
-		 * 使用Body.applyForce设置
-		 * 在Body.update之后清零
-		 */
-		force?: Vector;
 		/**
 		 * 施加的扭矩(旋转力) [0]
 		 * Body.update之后清零
@@ -145,60 +112,11 @@ namespace sharp.body {
 		 */
 		inertia?: number;
 		/**
-		 * 反惯性矩，即 1 / inertia
-		 * 修改此值，也需要修改inertia
-		 */
-		inverseInertia?: number;
-		/**
 		 * 质量
 		 * 最好使用density来自动计算质量
 		 * 如果修改此值，则必须修改 inverseMass = 1 / mass
 		 */
 		mass?: number;
-		/**
-		 * 反质量，即 1 / mass
-		 * 修改此值，则必须修改mass
-		 */
-		inverseMass?: number;
-		/**
-		 * [x: 0, y: 0]
-		 */
-		positionImpulse?: Vector;
-		/**
-		 * 约束脉冲 [x: 0, y: 0, angle: 0]
-		 */
-		constraintImpulse?: Ray;
-		/**
-		 * [0]
-		 */
-		totalContacts?: number;
-		/**
-		 * 瞬时速度 [0]
-		 * 最后一次执行 Body.update 之后值
-		 * 只读
-		 */
-		speed?: number;
-		/**
-		 * 瞬时角速度 [0]
-		 * 最后一次执行 Body.update 之后值
-		 * 只读
-		 */
-		angularSpeed?: number;
-		/**
-		 * 瞬时速度 [x: 0, y: 0]
-		 * 最后一次执行 Body.update 之后值
-		 * 如果你需要修改速度，应该是applyForce，或改变postion
-		 * 只读
-		 *
-		 */
-		velocity?: Vector;
-		/**
-		 * 瞬时角速度 [0]
-		 * 最后一次执行 Body.update 之后值
-		 * 如果你需要改变刚体角速度，需要设置torque或angle
-		 * 只读
-		 */
-		angularVelocity?: number;
 		/**
 		 * 是否传感器刚体 [false]
 		 * 当传感器发生碰撞时，不发生反应
@@ -216,12 +134,6 @@ namespace sharp.body {
 		 * 只读
 		 */
 		isSleeping?: boolean;
-		/**
-		 * 移动量的组合(speed和angularSpeed) [0]
-		 * 与Sleeping属性，在场景中计算刚体是否已经休眠
-		 * 只读
-		 */
-		motion?: number;
 		/**
 		 * 睡眠阈值，[60]次
 		 * 刚体接近0速度时，引擎更新了多少次之后，超过阈值则进入睡眠
@@ -284,8 +196,68 @@ namespace sharp.body {
 	 */
 	export class Body extends Base {
 		protected options: body.BodyOptions;
-		public _original: body.BodyOptions;
+		/**
+		 * 初始角度，默认等于angle
+		 */
+		protected _anglePrev: number = 0;
+		/**
+		 * 面积
+		 */
+		protected _area: number = 0;
+		/**
+		 * AABB区域
+		 */
+		protected _bounds: Bounds = new Bounds();
+		/**
+		 * 用于碰撞检测的唯一轴坐标集合（边缘法线）
+		 */
+		protected _axes: Axes = new Axes();
+		/**
+		 * 初始质点坐标，默认等于position
+		 */
+		protected _positionPrev: Point = new Point;
+		/**
+		 * 施加的力向量，[x: 0, y: 0]
+		 */
+		protected _force: Vector = new Vector;
+		/**
+		 * 反惯性矩，即 1 / inertia
+		 */
+		protected _inverseInertia: number = 0;
+		/**
+		 * 反质量，即 1 / mass
+		 */
+		protected _inverseMass: number = 0;
+		/**
+		 * [x: 0, y: 0]
+		 */
+		protected _positionImpulse: Vector = new Vector;
+		/**
+		 * 约束脉冲 [x: 0, y: 0, angle: 0]
+		 */
+		protected _constraintImpulse: Ray = new Ray();
+		protected _totalContacts: number = 0;
+		/**
+		 * 瞬时速度 [0]
+		 */
+		protected _speed: number = 0;
+		/**
+		 * 瞬时角速度 [0]
+		 */
+		protected _angularSpeed: number = 0;
+		/**
+		 * 瞬时角速度 [0]
+		 */
+		protected _angularVelocity: number = 0;
+		/**
+		 * 移动量的组合(speed和angularSpeed) [0]
+		 */
+		protected _motion: number;
+
+		public _original: any;
 		public sleepCounter: number = 0;
+
+
 		protected static _nextCollidingGroupId: number = 1;
 		protected static _nextNonCollidingGroupId: number = -1;
 		protected static _nextCategory: number = 0x0001;
@@ -311,11 +283,12 @@ namespace sharp.body {
 		}
 
 		/**
-		 * 复合体的零件合集
-		 * 第0个刚体指向复合体实例
-		 * parts中所有的零件刚体组成了复合体，零件允许重叠、空隙、或孔，甚至形成凹面体
-		 * 对于复合体内的零件，不能将入World，而是在World中只加入复合体（也就是零件们的父刚体）
-		 * 使用Body.setParts设置，不要单独设置
+		 * 刚性复合体的刚体合集
+		 *
+		 * 如果是普通刚体，只有一个值，指向自己。如果是刚性复合体，第0个刚体指向自己，之后的是其它刚体
+		 * parts中所有的零件刚体组成了整个刚性复合体，零件允许重叠、空隙、或孔，甚至形成凹面体
+		 * 对于刚性复合体内的零件刚体，不能单独加入World
+		 * 使用Body.setParts设置
 		 */
 		public get parts(): Body[] {
 			return this.options.parts!;
@@ -342,11 +315,11 @@ namespace sharp.body {
 		 * 如果不等于angle，受力之后，会导致刚体旋转
 		 */
 		public get anglePrev(): number {
-			return this.options.anglePrev!;
+			return this._anglePrev!;
 		}
 
 		public set anglePrev(value: number) {
-			this.options.anglePrev = value;
+			this._anglePrev = value;
 		}
 
 		/**
@@ -355,11 +328,11 @@ namespace sharp.body {
 		 * 只读
 		 */
 		public get area(): number {
-			return this.options.area!;
+			return this._area!;
 		}
 
 		public set area(value: number) {
-			this.options.area = value;
+			this._area = value;
 		}
 
 		/**
@@ -369,11 +342,11 @@ namespace sharp.body {
 		 * 只读
 		 */
 		public get bounds(): Bounds {
-			return this.options.bounds!;
+			return this._bounds!;
 		}
 
 		public set bounds(value: Bounds) {
-			this.options.bounds = value;
+			this._bounds = value;
 		}
 
 		/**
@@ -381,17 +354,18 @@ namespace sharp.body {
 		 * 自动根据vertices计算
 		 */
 		public get axes(): Axes {
-			return this.options.axes!;
+			return this._axes!;
 		}
 
 		public set axes(value: Axes) {
-			this.options.axes = value;
+			this._axes = value;
 		}
 
 		/**
 		 * 顶点合集
 		 * 不支持凹面多边形
 		 * 这个会自动计算inertia/bounds
+		 * 使用Body.setVertices设置
 		 */
 		public get vertices(): Vertices {
 			return this.options.vertices;
@@ -417,11 +391,11 @@ namespace sharp.body {
 		 * 如果在渲染时改变position，会导致惯性、摩擦力等特征触发，如果不希望触发，使用Body.setPostion
 		 */
 		public get positionPrev(): Point {
-			return this.options.positionPrev!;
+			return this._positionPrev!;
 		}
 
 		public set positionPrev(value: Point) {
-			this.options.positionPrev = value;
+			this._positionPrev = value;
 		}
 
 		/**
@@ -442,11 +416,11 @@ namespace sharp.body {
 		 * 在Body.update之后清零
 		 */
 		public get force(): Vector {
-			return this.options.force!;
+			return this._force!;
 		}
 
 		public set force(value: Vector) {
-			this.options.force = value;
+			this._force = value;
 		}
 
 		/**
@@ -464,7 +438,7 @@ namespace sharp.body {
 		/**
 		 * 惯性矩(即面积的二次矩)
 		 * 可以自动根据vertices和density计算得到
-		 * 如果修改此值，则必须修改 inverseInertia = 1 / inertia
+		 * 初始赋值此值，则必须赋值 inverseInertia = 1 / inertia
 		 */
 		public get inertia(): number {
 			return this.options.inertia!;
@@ -476,20 +450,22 @@ namespace sharp.body {
 
 		/**
 		 * 反惯性矩，即 1 / inertia
-		 * 修改此值，也需要修改inertia
+		 * 初始赋值此值，也需要赋值inertia
+		 * 使用setInertia设置
 		 */
 		public get inverseInertia(): number {
-			return this.options.inverseInertia!;
+			return this._inverseInertia!;
 		}
 
 		public set inverseInertia(value: number) {
-			this.options.inverseInertia = value;
+			this._inverseInertia = value;
 		}
 
 		/**
 		 * 质量
 		 * 最好使用density来自动计算质量
 		 * 如果修改此值，则必须修改 inverseMass = 1 / mass
+		 * 使用Body.setMass设置
 		 */
 		public get mass(): number {
 			return this.options.mass!;
@@ -504,78 +480,80 @@ namespace sharp.body {
 		 * 修改此值，则必须修改mass
 		 */
 		public get inverseMass(): number {
-			return this.options.inverseMass!;
+			return this._inverseMass!;
 		}
 
 		public set inverseMass(value: number) {
-			this.options.inverseMass = value;
+			this._inverseMass = value;
 		}
 
 		/**
 		 * [x: 0, y: 0]
 		 */
 		public get positionImpulse(): Vector {
-			return this.options.positionImpulse!;
+			return this._positionImpulse!;
 		}
 
 		public set positionImpulse(value: Vector) {
-			this.options.positionImpulse = value;
+			this._positionImpulse = value;
 		}
 
 		/**
 		 * 约束脉冲 [x: 0, y: 0, angle: 0]
 		 */
 		public get constraintImpulse(): Ray {
-			return this.options.constraintImpulse!;
+			return this._constraintImpulse!;
 		}
 
 		public set constraintImpulse(value: Ray) {
-			this.options.constraintImpulse = value;
+			this._constraintImpulse = value;
 		}
 
 		/**
 		 * [0]
 		 */
 		public get totalContacts(): number {
-			return this.options.totalContacts!;
+			return this._totalContacts!;
 		}
 
 		public set totalContacts(value: number) {
-			this.options.totalContacts = value;
+			this._totalContacts = value;
 		}
 
 		/**
 		 * 瞬时速度 [0]
+		 * 与velocity的区别在于，这个是velocity向量的斜边长度
 		 * 最后一次执行 Body.update 之后值
 		 * 只读
 		 */
 		public get speed(): number {
-			return this.options.speed!;
+			return this._speed!;
 		}
 
 		public set speed(value: number) {
-			this.options.speed = value;
+			this._speed = value;
 		}
 
 		/**
 		 * 瞬时角速度 [0]
 		 * 最后一次执行 Body.update 之后值
+		 * 与angularVelocity的区别是，这个永远为正
 		 * 只读
 		 */
 		public get angularSpeed(): number {
-			return this.options.angularSpeed!;
+			return this._angularSpeed!;
 		}
 
 		public set angularSpeed(value: number) {
-			this.options.angularSpeed = value;
+			this._angularSpeed = value;
 		}
 
 		/**
-		 * 瞬时速度 [x: 0, y: 0]
+		 * 瞬时速度，速度向量 [x: 0, y: 0]
 		 * 最后一次执行 Body.update 之后值
 		 * 如果你需要修改速度，应该是applyForce，或改变postion
 		 * 只读
-		 *
+		 * 使用Body.setVelocity赋值
 		 */
 		public get velocity(): Vector {
 			return this.options.velocity!;
@@ -590,13 +568,14 @@ namespace sharp.body {
 		 * 最后一次执行 Body.update 之后值
 		 * 如果你需要改变刚体角速度，需要设置torque或angle
 		 * 只读
+		 * 使用Body.setAngularVelocity赋值
 		 */
 		public get angularVelocity(): number {
-			return this.options.angularVelocity!;
+			return this._angularVelocity!;
 		}
 
 		public set angularVelocity(value: number) {
-			this.options.angularVelocity = value;
+			this._angularVelocity = value;
 		}
 
 		/**
@@ -626,7 +605,8 @@ namespace sharp.body {
 
 		/**
 		 * 是否可以睡眠 [false]
-		 * 修改这个属性并不能立即进入睡眠，如果需要，请使用Sleeping.set立即进入睡眠状态
+		 * 修改这个属性并不能立即进入睡眠，
+		 * 如果需要，使用Body.setSleeping立即进入睡眠状态
 		 * 只读
 		 */
 		public get isSleeping(): boolean {
@@ -639,20 +619,20 @@ namespace sharp.body {
 
 		/**
 		 * 移动量的组合(speed和angularSpeed) [0]
-		 * 与Sleeping属性，在场景中计算刚体是否已经休眠
+		 * 与Sleeping属性配合，在场景中计算刚体是否已经休眠
 		 * 只读
 		 */
 		public get motion(): number {
-			return this.options.motion!;
+			return this._motion!;
 		}
 
 		public set motion(value: number) {
-			this.options.motion = value;
+			this._motion = value;
 		}
 
 		/**
 		 * 睡眠阈值，[60]次
-		 * 刚体接近0速度时，引擎更新了多少次之后，超过阈值则进入睡眠
+		 * 刚体接近静止时，引擎更新了多少次(阈值)之后仍然静止，则进入睡眠
 		 */
 		public get sleepThreshold(): number {
 			return this.options.sleepThreshold!;
@@ -665,6 +645,7 @@ namespace sharp.body {
 		/**
 		 * 密度 [0.001]
 		 * 如果设置，则mass会根据面积自动计算，这比单纯设置质量会更好
+		 * 使用Body.setDensity赋值
 		 */
 		public get density(): number {
 			return this.options.density!;
@@ -785,21 +766,13 @@ namespace sharp.body {
 				plugin: {},
 				angle: 0,
 				parent: this,
-				vertices: Vertices.create('L 0 0 L 40 0 L 40 40 L 0 40'),
+				vertices: Vertices.create('L 0 0 L 40 0 L 40 40 L 0 40').setBody(this),
 				position: new Point(),
-				force: new Point(),
+				velocity: new Vector(),
 				torque: 0,
-				positionImpulse: new Point(),
-				constraintImpulse: new Ray(),
-				totalContacts: 0,
-				speed: 0,
-				angularSpeed: 0,
-				velocity: new Point(),
-				angularVelocity: 0,
 				isSensor: false,
 				isStatic: false,
 				isSleeping: false,
-				motion: 0,
 				sleepThreshold: 60,
 				density: 0.001,
 				restitution: 0,
@@ -887,7 +860,7 @@ namespace sharp.body {
 						this.setParts(value);
 						break;
 					default:
-						this.options[property] = value;
+						this[property] = value;
 				}
 			}
 
@@ -898,14 +871,14 @@ namespace sharp.body {
 		 * @method _initProperties
 		 * @private
 		 */
-		protected _initProperties(options: body.Options)
+		protected _initProperties(options: BodyOptions)
 		{
 			//边界
-			this.bounds = this.options.bounds || this.options.vertices.getBounds();
+			this.bounds = this.options.vertices.getBounds();
 			//初始质点
-			this.positionPrev = this.options.positionPrev || this.options.position.clone();
+			this.positionPrev = this.options.position.clone();
 			//初始角度
-			this.anglePrev = this.options.anglePrev || this.options.angle!;
+			this.anglePrev = this.options.angle!;
 			//顶点合集
 			this.setVertices(this.options.vertices);
 			//零件
@@ -916,17 +889,12 @@ namespace sharp.body {
 			this.setSleeping(this.options.isSleeping!);
 			//设置父刚体
 			this.parent = this.options.parent! || this;
-
 			//旋转所有顶点
 			this.vertices.rotate(this.options.angle!, this.options.position);
 			//旋转轴
 			this.axes.rotate(this.options.angle!);
 			//根据速度 计算边界
 			this.bounds.setTo(this.options.vertices, this.options.velocity);
-			//轴，如果自定义，使用自定义
-			this.axes = options.axes || this.options.axes!;
-			//面积
-			this.area = options.area || this.options.area!;
 			//质量
 			this.setMass(options.mass || this.options.mass!);
 			//惯性
@@ -972,7 +940,8 @@ namespace sharp.body {
 		 * @method setStatic
 		 * @param {bool} isStatic
 		 */
-		public setStatic(isStatic: boolean): Body {
+		public setStatic(isStatic: boolean): Body
+		{
 			for (let i = 0; i < this.parts.length; i++) {
 				let part = this.parts[i];
 				part.isStatic = isStatic;
@@ -986,7 +955,7 @@ namespace sharp.body {
 						density: part.density,
 						inverseMass: part.inverseMass,
 						inverseInertia: part.inverseInertia
-					} as BodyOptions;
+					};
 
 					part.restitution = 0;
 					part.friction = 1;
@@ -1020,7 +989,8 @@ namespace sharp.body {
 		 * @method setMass
 		 * @param {number} mass
 		 */
-		public setMass(mass: number): Body {
+		public setMass(mass: number): Body
+		{
 			let moment = this.inertia / (this.mass / 6);
 			this.inertia = moment * (mass / 6);
 			this.inverseInertia = 1 / this.inertia;
@@ -1036,7 +1006,8 @@ namespace sharp.body {
 		 * @method setDensity
 		 * @param {number} density
 		 */
-		public setDensity(density: number): Body {
+		public setDensity(density: number): Body
+		{
 			this.setMass(density * this.area);
 			this.density = density;
 			return this;
@@ -1048,7 +1019,8 @@ namespace sharp.body {
 		 * @method setInertia
 		 * @param {number} inertia
 		 */
-		public setInertia(inertia: number): Body {
+		public setInertia(inertia: number): Body
+		{
 			this.inertia = inertia;
 			this.inverseInertia = 1 / this.inertia;
 			return this;
@@ -1065,12 +1037,13 @@ namespace sharp.body {
 		 * @method setVertices
 		 * @param {vector[]} vertices
 		 */
-		public setVertices(vertices: Vertices): Body {
+		public setVertices(vertices: Vertices): Body
+		{
 			// change vertices
 			if (vertices.body === this) {
 				this.vertices = vertices;
 			} else {
-				this.vertices = vertices.clone();
+				this.vertices = vertices.clone().setBody(this);
 			}
 
 			// update properties
@@ -1079,6 +1052,7 @@ namespace sharp.body {
 			this.setMass(this.density * this.area)
 
 			// orient vertices around the centre of mass at origin (0, 0)
+			// 将顶点按照质点偏移
 			let centre = this.vertices.centre();
 			this.vertices.translate(centre, -1);
 
@@ -1125,9 +1099,9 @@ namespace sharp.body {
 
 			// find the convex hull of all parts to set on the parent body
 			if (autoHull) {
-				let vertices: Vertices = new Vertices();
+				let vertices: Vertices = new Vertices().setBody(this);
 				for (i = 0; i < parts.length; i++) {
-					vertices.concat(parts[i].vertices.items);
+					vertices.add(...parts[i].vertices.items);
 				}
 
 				vertices.clockwiseSort();
@@ -1144,14 +1118,14 @@ namespace sharp.body {
 
 			this.area = total.area!;
 			this.parent = this;
-			this.position.x = total.centre!.x;
-			this.position.y = total.centre!.y;
-			this.positionPrev.x = total.centre!.x;
-			this.positionPrev.y = total.centre!.y;
+			this.position.x = total.centre.x;
+			this.position.y = total.centre.y;
+			this.positionPrev.x = total.centre.x;
+			this.positionPrev.y = total.centre.y;
 
 			this.setMass(total.mass!);
-			this.setInertia(total.inertia!);
-			this.setPosition(total.centre!);
+			this.setInertia(total.inertia);
+			this.setPosition(total.centre);
 			return this;
 		}
 
@@ -1160,7 +1134,8 @@ namespace sharp.body {
 		 * @method setPosition
 		 * @param {vector} position
 		 */
-		public setPosition(position: Point): Body {
+		public setPosition(position: Point): Body
+		{
 			let delta = position.clone().subtract(this.position.x, this.position.y);
 			this.positionPrev.x += delta.x;
 			this.positionPrev.y += delta.y;
@@ -1180,7 +1155,8 @@ namespace sharp.body {
 		 * @method setAngle
 		 * @param {number} angle
 		 */
-		public setAngle(angle: number): Body {
+		public setAngle(angle: number): Body
+		{
 			let delta = angle - this.angle;
 			this.anglePrev += delta;
 
@@ -1213,7 +1189,8 @@ namespace sharp.body {
 		 * @method setVelocity
 		 * @param {vector} velocity
 		 */
-		public setVelocity(velocity: Vector): Body {
+		public setVelocity(velocity: Vector): Body
+		{
 			this.positionPrev.x = this.position.x - velocity.x;
 			this.positionPrev.y = this.position.y - velocity.y;
 			this.velocity.x = velocity.x;
@@ -1227,7 +1204,8 @@ namespace sharp.body {
 		 * @method setAngularVelocity
 		 * @param {number} velocity
 		 */
-		public setAngularVelocity(velocity: number): Body {
+		public setAngularVelocity(velocity: number): Body
+		{
 			this.anglePrev = this.angle - velocity;
 			this.angularVelocity = velocity;
 			this.angularSpeed = Math.abs(this.angularVelocity);
@@ -1239,7 +1217,8 @@ namespace sharp.body {
 		 * @method translate
 		 * @param {vector} translation
 		 */
-		public translate(translation: Vector): Body {
+		public translate(translation: Vector): Body
+		{
 			this.setPosition(this.position.clone().add(translation.x, translation.y));
 			return this;
 		}
@@ -1250,7 +1229,8 @@ namespace sharp.body {
 		 * @param {number} rotation
 		 * @param {vector} [point]
 		 */
-		public rotate(rotation: number, point?: Point): Body {
+		public rotate(rotation: number, point?: Point): Body
+		{
 			if (point == undefined) {
 				this.setAngle(this.angle + rotation);
 			} else {
@@ -1276,7 +1256,8 @@ namespace sharp.body {
 		 * @param {number} scaleY
 		 * @param {vector} [point]
 		 */
-		public scale(scaleX: number, scaleY: number, point?: Point): Body {
+		public scale(scaleX: number, scaleY: number, point?: Point): Body
+		{
 			let totalArea = 0,
 				totalInertia = 0;
 
@@ -1336,12 +1317,14 @@ namespace sharp.body {
 
 		/**
 		 * Performs a simulation step for the given `body`, including updating position and angle using Verlet integration.
+		 * 根据 deltaTime 计算此时间之后的刚体物理状态
 		 * @method update
 		 * @param {number} deltaTime
 		 * @param {number} timeScale
 		 * @param {number} correction
 		 */
-		public update(deltaTime: number, timeScale: number, correction: number): Body {
+		public update(deltaTime: number, timeScale: number, correction: number): Body
+		{
 			let deltaTimeSquared = Math.pow(deltaTime * timeScale * this.timeScale, 2);
 
 			// from the previous step
@@ -1393,11 +1376,13 @@ namespace sharp.body {
 
 		/**
 		 * Applies a force to a body from a given world-space position, including resulting torque.
+		 * 施加一个力
 		 * @method applyForce
 		 * @param {vector} position
 		 * @param {vector} force
 		 */
-		public applyForce(position: Point, force: Vector): Body {
+		public applyForce(position: Point, force: Vector): Body
+		{
 			this.force.x += force.x;
 			this.force.y += force.y;
 			let offset = { x: position.x - this.position.x, y: position.y - this.position.y };
@@ -1411,17 +1396,13 @@ namespace sharp.body {
 		 * @private
 		 * @return {}
 		 */
-		protected _totalProperties(): body.Options
+		protected _totalProperties(): any
 		{
 			// from equations at:
 			// https://ecourses.ou.edu/cgi-bin/ebook.cgi?doc=&topic=st&chap_sec=07.2&page=theory
 			// http://output.to/sideway/default.asp?qno=121100087
 
-			let properties: body.Options = {
-				id: 0,
-				type: '',
-				position: new Point(),
-				vertices: new Vertices(),
+			let properties: any = {
 				mass: 0,
 				area: 0,
 				inertia: 0,
@@ -1433,12 +1414,12 @@ namespace sharp.body {
 				let part = this.parts[i],
 					mass = part.mass !== Infinity ? part.mass : 1;
 
-				properties.mass! += mass;
-				properties.area! += part.area;
-				properties.inertia! += part.inertia;
-				properties.centre = part.position.clone().multiply(mass).add(properties.centre!.x, properties.centre!.y);
+				properties.mass += mass;
+				properties.area += part.area;
+				properties.inertia += part.inertia;
+				properties.centre = part.position.clone().multiply(mass).add(properties.centre.x, properties.centre.y);
 			}
-			properties.centre!.divide(properties.mass!);
+			properties.centre.divide(properties.mass!);
 
 			return properties;
 		}
