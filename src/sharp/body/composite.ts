@@ -7,13 +7,13 @@ namespace sharp {
 		composites?: Composite[];
 	}
 
-	export interface CompositeOptions extends body.Options, CompositeExtraOptions {
+	export interface CompositeOptions extends base.Options, CompositeExtraOptions {
 
 	}
 	/**
 	 * 复合体类
 	 */
-	export class Composite extends body.Base {
+	export class Composite extends Base {
 		protected options: CompositeOptions;
 		protected isModified: boolean = false;
 		public bodies: Body[] = [];
@@ -286,7 +286,7 @@ namespace sharp {
 		 * @param {boolean} [deep=false]
 		 * @return {composite} The original composite with the constraint removed
 		 */
-		public removeConstraint(constraint: Constraint, deep: boolean): Composite {
+		public removeConstraint(constraint: Constraint, deep: boolean = false): Composite {
 			let position = this.constraints.indexOf(constraint);
 			if (position !== -1) {
 				this.removeConstraintAt(position);

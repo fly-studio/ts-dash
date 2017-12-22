@@ -2,11 +2,11 @@ namespace sharp.events {
 	/**
 	 * Subscribes a callback function to the given object's `eventName`.
 	 * @method on
-	 * @param {} obj
+	 * @param {EventDispatcher} obj
 	 * @param {string} eventNames
 	 * @param {function} callback
 	 */
-	export function on(obj: body.Base, eventNames: string, callback: Function): Function {
+	export function on(obj: EventDispatcher, eventNames: string, callback: Function): Function {
 		let names = eventNames.split(' '),
 			name: string;
 
@@ -18,16 +18,16 @@ namespace sharp.events {
 		}
 
 		return callback;
-	};
+	}
 
 	/**
 	 * Removes the given event callback. If no callback, clears all callbacks in `eventNames`. If no `eventNames`, clears all
 	 * @method off
-	 * @param {} obj
+	 * @param {EventDispatcher} obj
 	 * @param {string} eventNames
 	 * @param {function} callback
 	 */
-	export function off(obj: body.Base, eventNames: string, callback: Function) {
+	export function off(obj: EventDispatcher, eventNames: string, callback: Function) {
 		if (!eventNames) {
 			obj.events = {};
 			return;
@@ -54,16 +54,16 @@ namespace sharp.events {
 
 			obj.events[names[i]] = newCallbacks;
 		}
-	};
+	}
 
 	/**
 	 * Fires all the callbacks subscribed to the given object's `eventName`, in the order they subscribed, if any.
 	 * @method trigger
-	 * @param {} obj
+	 * @param {EventDispatcher} obj
 	 * @param {string} eventNames
 	 * @param {} event
 	 */
-	export function trigger(obj: body.Base, eventNames: string, event: any) {
+	export function trigger(obj: EventDispatcher, eventNames: string, event: any) {
 		let names: string[],
 			name: string,
 			callbacks: Function,
@@ -90,5 +90,5 @@ namespace sharp.events {
 				}
 			}
 		}
-	};
+	}
 }

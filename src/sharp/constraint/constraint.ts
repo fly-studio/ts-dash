@@ -1,21 +1,21 @@
 namespace sharp {
 	export interface ConstraintExtraOptions {
-		bodyA: Body;
+		bodyA?: Body;
 		pointA?: Point;
 		angleA?: number;
-		bodyB: Body;
-		pointB?: Point;
+		bodyB?: Body|null;
+		pointB?: Point|null;
 		angleB?: number;
 		length?: number;
 		stiffness?: number;
 		damping?: number;
 		angularStiffness ?: number;
-		render?: body.RenderOptions;
+		render?: base.RenderOptions;
 	}
-	export interface ConstraintOptions extends body.Options, ConstraintExtraOptions {
+	export interface ConstraintOptions extends base.Options, ConstraintExtraOptions {
 
 	}
-	export class Constraint {
+	export class Constraint extends Base {
 		protected options: ConstraintOptions;
 		public static _warming: number = .4;
 		public static _torqueDampen: number = 1;
@@ -35,11 +35,12 @@ namespace sharp {
 		 */
 		constructor(options: ConstraintOptions)
 		{
+			super();
 			this.options = object.extend(this.defaultOptions(), options);
 
-			this.bodyA = options.bodyA;
+			this.bodyA = options.bodyA!;
 			this.pointA = options.pointA ? options.pointA : new Point;
-			this.bodyB = options.bodyB;
+			this.bodyB = options.bodyB!;
 			this.pointB = options.pointB ? options.pointB : new Point;
 
 			// calculate static length using initial world space points
@@ -70,11 +71,11 @@ namespace sharp {
 			this.options.bodyA = value;
 		}
 
-		public get bodyB(): Body {
+		public get bodyB(): Body | null {
 			return this.options.bodyB!;
 		}
 
-		public set bodyB(value: Body) {
+		public set bodyB(value: Body | null) {
 			this.options.bodyB = value;
 		}
 
@@ -86,11 +87,11 @@ namespace sharp {
 			this.options.pointA = value;
 		}
 
-		public get pointB(): Point {
+		public get pointB(): Point | null {
 			return this.options.pointB!;
 		}
 
-		public set pointB(value: Point) {
+		public set pointB(value: Point | null) {
 			this.options.pointB = value;
 		}
 
@@ -138,7 +139,7 @@ namespace sharp {
 			this.options.angularStiffness = value;
 		}
 
-		public get render(): body.RenderOptions {
+		public get render(): base.RenderOptions {
 			return this.options.render!;
 		}
 
@@ -158,7 +159,7 @@ namespace sharp {
 					anchors: true
 				},
 				plugin: {}
-			} as ConstraintOptions;
+			};
 		}
 
 		/**
@@ -168,7 +169,8 @@ namespace sharp {
 		 * @param {constraint} constraint
 		 * @param {number} timeScale
 		 */
-		public solve(timeScale: number): Constraint {
+		public solve(timeScale: number): Constraint
+		{
 			let bodyA = this.bodyA,
 				bodyB = this.bodyB,
 				pointA = this.pointA,

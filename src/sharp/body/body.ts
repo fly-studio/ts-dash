@@ -1,24 +1,6 @@
 namespace sharp {
 	import Vector = sharp.Point;
 
-	export interface collisionFilterOptions {
-		/**
-		 * 范围 (1, 2, 4, 8, 16, ... 2^31) [1]
-		 * 共32个不同的bitamask子掩码
-		 */
-		category?: number;
-		/**
-		 * 范围 1 - 2^32 [0xFFFFFFFF]
-		 * 这是bitmask的掩码
-		 */
-		mask?: number;
-		/**
-		 * a.group, b.group 如果相等，且均为正数表示两者相撞；均为负数永远不相撞。
-		 * 如果不相同（或任意一个为0），当(a.mask & b.category) && (a.category && b.mask)，则表示两者相撞
-		 */
-		group?: number;
-	}
-
 	export interface BodyExtraOptions {
 
 		/**
@@ -128,7 +110,7 @@ namespace sharp {
 		 * 碰撞参数
 		 *
 		 */
-		collisionFilter?: collisionFilterOptions;
+		collisionFilter?: base.CollisionFilterOptions;
 		/**
 		 * 允许两个刚体堆砌重合多少距离，或者是碰撞旋转时允许重合距离 [0.05]
 		 * 除非你足够了解slop引擎的目的，不然使用默认值比较好
@@ -143,16 +125,16 @@ namespace sharp {
 		/**
 		 * 渲染参数
 		 */
-		render?: body.RenderOptions;
+		render?: base.RenderOptions;
 	}
 
-	export interface BodyOptions extends body.Options, BodyExtraOptions {
+	export interface BodyOptions extends base.Options, BodyExtraOptions {
 
 	}
 	/**
 	 * 刚体类
 	 */
-	export class Body extends body.Base {
+	export class Body extends Base {
 		protected options: BodyOptions;
 		/**
 		 * 初始角度，默认等于angle
@@ -671,11 +653,11 @@ namespace sharp {
 		 * 碰撞参数
 		 *
 		 */
-		public get collisionFilter(): collisionFilterOptions {
+		public get collisionFilter(): base.CollisionFilterOptions {
 			return this.options.collisionFilter!;
 		}
 
-		public set collisionFilter(value: collisionFilterOptions) {
+		public set collisionFilter(value: base.CollisionFilterOptions) {
 			this.options.collisionFilter = value;
 		}
 
@@ -707,11 +689,11 @@ namespace sharp {
 		/**
 		 * 渲染参数
 		 */
-		public get render(): BodyRenderOptions {
+		public get render(): base.RenderOptions {
 			return this.options.render!;
 		}
 
-		public set render(value: BodyRenderOptions) {
+		public set render(value: base.RenderOptions) {
 			this.options.render = value;
 		}
 
