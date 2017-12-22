@@ -16,9 +16,22 @@ namespace sharp {
 			return this.start.x;
 		}
 
+		public set x(value: number)
+		{
+			this.start.x = value;
+		}
+
 		public get y(): number
 		{
 			return this.start.y;
+		}
+
+		public set y(value: number) {
+			this.start.y = value;
+		}
+
+		public get point(): Point {
+			return this.start;
 		}
 
 		public setTo(p: Point, angle: number): Ray;

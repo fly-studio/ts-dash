@@ -9,8 +9,8 @@ namespace sharp {
 		{
 			if (vertices == undefined)
 			{
-				this.min = new Point;
-				this.max = new Point;
+				this.min = new Point(-Infinity, -Infinity);
+				this.max = new Point(Infinity, Infinity);
 			}
 			else
 				this.setTo(vertices, velocity);

@@ -1,52 +1,6 @@
 namespace sharp {
 	import Vector = sharp.Point;
 
-	export interface BodyRenderOptions {
-		/**
-		 * 是否显示 [true]
-		 */
-		visible?: boolean;
-		/**
-		 * 不透明度 [1]
-		 */
-		opacity?: number;
-		/**
-		 * Sprite 属性
-		 */
-		sprite?: {
-			// Sprite渲染纹理
-			texture?: any;
-			/**
-			 * Sprite的x缩放
-			 */
-			xScale?: number;
-			/**
-			 * Sprite的y缩放
-			 */
-			yScale?: number;
-			/**
-			 * Sprite的x偏移，因为body的position是质点的坐标，所以设置这个，让Sprite的坐标渲染正确。下同
-			 */
-			xOffset?: number;
-			/**
-			 * Sprite的y偏移
-			 */
-			yOffset?: number
-		}
-		/**
-		 * 如果没Sprite，显示框的颜色 [0x0]
-		 */
-		strokeStyle?: number;
-		/**
-		 * 如果没Sprite，显示框填充颜色，默认会自动会在颜色列表中依次选择一个
-		 */
-		fillStyle?: number
-		/**
-		 * 如果没Sprite，显示框的线宽 [0]
-		 */
-		lineWidth?: number;
-	}
-
 	export interface collisionFilterOptions {
 		/**
 		 * 范围 (1, 2, 4, 8, 16, ... 2^31) [1]
@@ -189,7 +143,7 @@ namespace sharp {
 		/**
 		 * 渲染参数
 		 */
-		render?: BodyRenderOptions;
+		render?: body.RenderOptions;
 	}
 
 	export interface BodyOptions extends body.Options, BodyExtraOptions {
