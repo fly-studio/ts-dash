@@ -2,12 +2,12 @@ namespace sharp {
 	export interface MouseConstraintExtraOptions {
 		mouse?: Mouse;
 		element?: any;
-		collisionFilter?: base.CollisionFilterOptions;
+		collisionFilter?: options.CollisionFilterOptions;
 	}
-	export interface MouseConstraintOptions extends base.Options, MouseConstraintExtraOptions {
+	export interface MouseConstraintOptions extends options.Options, MouseConstraintExtraOptions {
 
 	}
-	export class MouseConstraint extends Base {
+	export class MouseConstraint extends Container {
 		protected options: MouseConstraintOptions;
 		public mouse: Mouse;
 		public body: Body | null;

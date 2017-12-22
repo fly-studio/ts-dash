@@ -10,12 +10,12 @@ namespace sharp {
 		stiffness?: number;
 		damping?: number;
 		angularStiffness ?: number;
-		render?: base.RenderOptions;
+		render?: options.RenderOptions;
 	}
-	export interface ConstraintOptions extends base.Options, ConstraintExtraOptions {
+	export interface ConstraintOptions extends options.Options, ConstraintExtraOptions {
 
 	}
-	export class Constraint extends Base {
+	export class Constraint extends Container {
 		protected options: ConstraintOptions;
 		public static _warming: number = .4;
 		public static _torqueDampen: number = 1;
@@ -139,7 +139,7 @@ namespace sharp {
 			this.options.angularStiffness = value;
 		}
 
-		public get render(): base.RenderOptions {
+		public get render(): options.RenderOptions {
 			return this.options.render!;
 		}
 
@@ -187,7 +187,7 @@ namespace sharp {
 
 			// update reference angle
 			if (bodyB && !bodyB.isStatic) {
-				pointB.rotate(bodyB.angle - this.angleB);
+				pointB!.rotate(bodyB.angle - this.angleB);
 				this.angleB = bodyB.angle;
 			}
 
@@ -195,7 +195,7 @@ namespace sharp {
 				pointBWorld = pointB;
 
 			if (bodyA) pointAWorld = bodyA.position.clone().add(pointA.x, pointA.y);
-			if (bodyB) pointBWorld = bodyB.position.clone().add(pointB.x, pointB.y);
+			if (bodyB) pointBWorld = bodyB.position.clone().add(pointB!.x, pointB!.y);
 
 			if (!pointAWorld || !pointBWorld)
 				return this;
@@ -272,7 +272,7 @@ namespace sharp {
 				}
 
 				// apply torque
-				torque = (pointB.cross(force) / resistanceTotal) * Constraint._torqueDampen * bodyB.inverseInertia * (1 - this.angularStiffness);
+				torque = (pointB!.cross(force) / resistanceTotal) * Constraint._torqueDampen * bodyB.inverseInertia * (1 - this.angularStiffness);
 				bodyB.constraintImpulse.angle += torque;
 				bodyB.angle += torque;
 			}

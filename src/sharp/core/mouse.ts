@@ -1,5 +1,5 @@
 namespace sharp {
-	import Vector = sharp.Point;
+	import Vector = Point;
 
 	export class Mouse extends EventDispatcher {
 

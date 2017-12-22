@@ -7,13 +7,13 @@ namespace sharp {
 		composites?: Composite[];
 	}
 
-	export interface CompositeOptions extends base.Options, CompositeExtraOptions {
+	export interface CompositeOptions extends options.Options, CompositeExtraOptions {
 
 	}
 	/**
 	 * 复合体类
 	 */
-	export class Composite extends Base {
+	export class Composite extends Container {
 		protected options: CompositeOptions;
 		protected isModified: boolean = false;
 		public bodies: Body[] = [];

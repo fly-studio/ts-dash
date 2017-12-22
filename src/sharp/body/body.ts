@@ -1,5 +1,5 @@
 namespace sharp {
-	import Vector = sharp.Point;
+	import Vector = Point;
 
 	export interface BodyExtraOptions {
 
@@ -110,7 +110,7 @@ namespace sharp {
 		 * 碰撞参数
 		 *
 		 */
-		collisionFilter?: base.CollisionFilterOptions;
+		collisionFilter?: options.CollisionFilterOptions;
 		/**
 		 * 允许两个刚体堆砌重合多少距离，或者是碰撞旋转时允许重合距离 [0.05]
 		 * 除非你足够了解slop引擎的目的，不然使用默认值比较好
@@ -125,16 +125,16 @@ namespace sharp {
 		/**
 		 * 渲染参数
 		 */
-		render?: base.RenderOptions;
+		render?: options.RenderOptions;
 	}
 
-	export interface BodyOptions extends base.Options, BodyExtraOptions {
+	export interface BodyOptions extends options.Options, BodyExtraOptions {
 
 	}
 	/**
 	 * 刚体类
 	 */
-	export class Body extends Base {
+	export class Body extends Container {
 		protected options: BodyOptions;
 		/**
 		 * 初始角度，默认等于angle
@@ -653,11 +653,11 @@ namespace sharp {
 		 * 碰撞参数
 		 *
 		 */
-		public get collisionFilter(): base.CollisionFilterOptions {
+		public get collisionFilter(): options.CollisionFilterOptions {
 			return this.options.collisionFilter!;
 		}
 
-		public set collisionFilter(value: base.CollisionFilterOptions) {
+		public set collisionFilter(value: options.CollisionFilterOptions) {
 			this.options.collisionFilter = value;
 		}
 
@@ -689,11 +689,11 @@ namespace sharp {
 		/**
 		 * 渲染参数
 		 */
-		public get render(): base.RenderOptions {
+		public get render(): options.RenderOptions {
 			return this.options.render!;
 		}
 
-		public set render(value: base.RenderOptions) {
+		public set render(value: options.RenderOptions) {
 			this.options.render = value;
 		}
 
