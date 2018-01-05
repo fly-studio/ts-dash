@@ -196,6 +196,7 @@ namespace sharp {
 
 		public _original: any;
 		public sleepCounter: number = 0;
+		public region: Region;
 
 
 		protected static _nextCollidingGroupId: number = 1;

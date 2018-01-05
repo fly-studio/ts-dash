@@ -10,11 +10,12 @@ namespace sharp {
 			return this.options.id!;
 		}
 
-		/* public set id(value: number) {
+		public setID(value: number) {
 			this.options.id = value;
-		} */
+		}
 
 		/**
+		 *
 		 * 类型
 		 * 比如：Rectange/Circle/Ellipse
 		 */
@@ -22,9 +23,9 @@ namespace sharp {
 			return this.options.type!;
 		}
 
-		/* public set type(value: string) {
+		public setType(value: string) {
 			this.options.type = value;
-		} */
+		}
 
 		/**
 		 * 标签，自定义用

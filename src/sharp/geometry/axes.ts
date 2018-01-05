@@ -15,6 +15,20 @@ namespace sharp {
 			return this.items.length;
 		}
 
+		public at(index: number): Point
+		{
+			return this.items[index];
+		}
+
+		public add(...args: Point[]): Axes
+		{
+			for (let i = 0; i < args.length; i++) {
+				const p = args[i];
+				this.items.push(p);
+			}
+			return this;
+		}
+
 		/**
 		 * Creates a new set of axes from the given vertices.
 		 * @method fromVertices
@@ -23,7 +37,7 @@ namespace sharp {
 		 */
 		public setTo(vertices: Vertices): Axes
 		{
-			let axes = {};
+			let axes = new Map<string, Point>();
 
 			// find the unique axes, using edge normal gradients
 			for (let i: number = 0; i < vertices.length; i++) {
@@ -33,9 +47,9 @@ namespace sharp {
 
 				// limit precision
 				let gradientStr: string = gradient.toFixed(3).toString();
-				axes[gradientStr] = normal;
+				axes.set(gradientStr, normal);
 			}
-			this.items = object.values(axes);
+			this.items = [...axes.values()];
 
 			return this;
 		}

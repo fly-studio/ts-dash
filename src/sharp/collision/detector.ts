@@ -10,9 +10,7 @@ namespace sharp.detector {
 		let collisions = [],
 			pairsTable = engine.pairs.table;
 
-		// @if DEBUG
 		let metrics = engine.metrics;
-		// @endif
 
 		for (let i = 0; i < broadphasePairs.length; i++) {
 			let bodyA: Body = broadphasePairs[i][0],
@@ -24,9 +22,8 @@ namespace sharp.detector {
 			if (!canCollide(bodyA.collisionFilter, bodyB.collisionFilter))
 				continue;
 
-			// @if DEBUG
-			metrics.midphaseTests += 1;
-			// @endif
+			if (DEBUG)
+				metrics.midphaseTests += 1;
 
 			// mid phase
 			if (bodyA.bounds.overlaps(bodyB.bounds)) {
@@ -51,17 +48,18 @@ namespace sharp.detector {
 							// narrow phase
 							let collision = SAT.collides(partA, partB, previousCollision);
 
-							// @if DEBUG
-							metrics.narrowphaseTests += 1;
-							if (collision.reused)
-								metrics.narrowReuseCount += 1;
-							// @endif
+							if (DEBUG)
+							{
+								metrics.narrowphaseTests += 1;
+								if (collision.reused)
+									metrics.narrowReuseCount += 1;
+							}
 
 							if (collision.collided) {
 								collisions.push(collision);
-								// @if DEBUG
-								metrics.narrowDetections += 1;
-								// @endif
+								if (DEBUG)
+									metrics.narrowDetections += 1;
+
 							}
 						}
 					}
@@ -80,7 +78,7 @@ namespace sharp.detector {
      * @param {base.CollisionFilterOptions} filterB
      * @return {bool} `true` if collision can occur
      */
-	export function canCollide(filterA: base.CollisionFilterOptions, filterB: base.CollisionFilterOptions): boolean
+	export function canCollide(filterA: options.CollisionFilterOptions, filterB: options.CollisionFilterOptions): boolean
 	{
 		if (filterA.group === filterB.group && filterA.group !== 0)
 			return filterA.group! > 0;

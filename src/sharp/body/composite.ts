@@ -1,7 +1,7 @@
 namespace sharp {
 
 	export interface CompositeExtraOptions {
-		isModified?: boolean;
+		//isModified?: boolean;
 		bodies?: Body[];
 		constraints?: Constraint[];
 		composites?: Composite[];
@@ -15,7 +15,7 @@ namespace sharp {
 	 */
 	export class Composite extends Container {
 		protected options: CompositeOptions;
-		protected isModified: boolean = false;
+		protected _isModified: boolean = false;
 		public bodies: Body[] = [];
 		public constraints: Constraint[] = [];
 		public composites: Composite[] = [];
@@ -27,6 +27,11 @@ namespace sharp {
 			if (options.constraints) {this.constraints = options.constraints; delete options.constraints;}
 			if (options.composites) {this.composites = options.composites; delete options.composites;}
 			this.options = object.extend(this.defaultOptions(), options);
+		}
+
+		public get isModified(): boolean
+		{
+			return this.isModified;
 		}
 
 		/**
@@ -79,7 +84,7 @@ namespace sharp {
 		 */
 		public setModified(isModified: boolean, updateParents: boolean = false, updateChildren: boolean = false): Composite
 		{
-			this.isModified = isModified;
+			this._isModified = isModified;
 
 			if (updateParents && this.parent) {
 				this.parent.setModified(isModified, updateParents, updateChildren);

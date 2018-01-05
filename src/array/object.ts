@@ -39,7 +39,7 @@ namespace object {
 		}
 
 		return obj;
-	};
+	}
 
 	/**
 	 * Creates a new clone of the object, if deep is true references will also be cloned.
@@ -50,7 +50,7 @@ namespace object {
 	 */
 	export function clone(obj: any, deep: boolean) {
 		return extend({}, deep, obj);
-	};
+	}
 
 	/**
 	 * Returns the list of keys for the given object.
@@ -68,7 +68,7 @@ namespace object {
 		for (let key in obj)
 			keys.push(key);
 		return keys;
-	};
+	}
 
 	/**
 	 * Returns the list of values for the given object.
@@ -128,6 +128,5 @@ namespace object {
 		get<T>(obj, path, 0, -1)[parts[parts.length - 1]] = val;
 		return val;
 	}
-
 
 }
