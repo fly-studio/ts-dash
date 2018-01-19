@@ -171,8 +171,8 @@ namespace sharp {
 			if (engine == undefined) engine = this.engine;
 
 			if (this.extended) {
-				let world = engine.world,
-					bodies = world.allBodies();
+				let world: World = engine.world,
+					bodies: Body[] = world.allBodies();
 
 				this.collisions = this.narrowDetections;
 				this.pairs = engine.pairs.list.length;

@@ -1,5 +1,6 @@
 namespace sharp {
 	export class Pairs {
+
 		public static _pairMaxIdleLife: number = 1000;
 		public engine: Engine;
 		public table: Map<string, Pair> = new Map<string, Pair>();

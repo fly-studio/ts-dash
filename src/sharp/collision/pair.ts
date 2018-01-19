@@ -1,5 +1,6 @@
 namespace sharp {
 	export class Pair {
+
 		public id: string;
 		public collision: Collision;
 		public bodyA: Body;

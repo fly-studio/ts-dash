@@ -1,7 +1,7 @@
 namespace sharp {
 
 	export abstract class Container extends EventDispatcher {
-		protected options: options.Options;
+		protected options: options.IOptions = {};
 
 		/**
 		 * ID 唯一值，自增，只读

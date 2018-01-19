@@ -10,7 +10,7 @@ namespace sharp {
 		 * @param {string} eventNames
 		 * @param {} event
 		 */
-		public trigger(eventNames: string, event: any) {
+		public trigger(eventNames: string, event?: any) {
 			return events.trigger(this, eventNames, event);
 		}
 

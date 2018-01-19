@@ -1,5 +1,5 @@
 namespace sharp.options {
-	export interface RenderOptions {
+	export type TRender = {
 		/**
 		 * 是否显示 [true]
 		 */
@@ -51,9 +51,9 @@ namespace sharp.options {
 		 *
 		 */
 		anchors?: boolean;
-	}
+	};
 
-	export interface CollisionFilterOptions {
+	export type TCollisionFilter = {
 		/**
 		 * 范围 (1, 2, 4, 8, 16, ... 2^31) [1]
 		 * 共32个不同的bitamask子掩码
@@ -69,9 +69,9 @@ namespace sharp.options {
 		 * 如果不相同（或任意一个为0），当(a.mask & b.category) && (a.category && b.mask)，则表示两者相撞
 		 */
 		group?: number;
-	}
+	};
 
-	export interface Options {
+	export interface IOptions {
 		/**
 		 * ID 唯一值，自增，只读
 		 */
@@ -93,5 +93,9 @@ namespace sharp.options {
 		 * 插件
 		 */
 		plugin?: Object;
+	};
+
+	export interface ICollisionFilterOptions {
+		collisionFilter?: TCollisionFilter;
 	}
 }

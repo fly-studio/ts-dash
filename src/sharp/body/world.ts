@@ -1,16 +1,18 @@
 namespace sharp {
-	export interface GravityOptions {
+	export type TGravityOptions = {
 		x: number;
 		y: number;
 		scale: number;
+	};
+
+	export interface IWorldExtraOptions {
+		gravity?: TGravityOptions;
 	}
-	export interface WorldExtraOptions {
-		gravity?: GravityOptions;
-		//bounds?: Bounds;
-	}
-	export interface WorldOptions extends CompositeOptions, WorldExtraOptions {
+
+	export interface WorldOptions extends CompositeOptions, IWorldExtraOptions {
 
 	}
+
 	export class World extends Composite {
 		protected options: WorldOptions;
 		/**
@@ -24,17 +26,17 @@ namespace sharp {
 		{
 			super({});
 
-			this.options = object.extend(this.options, { label: 'World' }, {
+			this.options = object.extend(this.options, {
+				label: 'World',
 				gravity: {
 					x: 0,
 					y: 1,
 					scale: 0.001
-				},
-				//bounds: new Bounds()
+				}
 			}, options);
 		}
 
-		public get gravity(): GravityOptions {
+		public get gravity(): TGravityOptions {
 			return this.gravity;
 		}
 
@@ -99,7 +101,7 @@ namespace sharp {
 			return sleeping.update(this.allBodies(), timeScale);
 		}
 
-		public applyGravity(gravity: GravityOptions) {
+		public applyGravity(gravity: TGravityOptions) {
 			return World.applyGravity(this.allBodies(), gravity);
 		}
 
@@ -212,7 +214,7 @@ namespace sharp {
 		 * @param {body[]} bodies
 		 * @param {vector} gravity
 		 */
-		public static applyGravity(bodies: Body[], gravity: GravityOptions)
+		public static applyGravity(bodies: Body[], gravity: TGravityOptions)
 		{
 			let gravityScale = typeof gravity.scale !== 'undefined' ? gravity.scale : 0.001;
 

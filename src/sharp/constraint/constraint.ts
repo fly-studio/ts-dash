@@ -1,4 +1,5 @@
 namespace sharp {
+
 	export interface ConstraintExtraOptions {
 		bodyA?: Body;
 		pointA?: Point;
@@ -12,9 +13,11 @@ namespace sharp {
 		angularStiffness ?: number;
 		render?: options.RenderOptions;
 	}
-	export interface ConstraintOptions extends options.Options, ConstraintExtraOptions {
+
+	export interface ConstraintOptions extends options.IOptions, ConstraintExtraOptions {
 
 	}
+
 	export class Constraint extends Container {
 		protected options: ConstraintOptions;
 		public static _warming: number = .4;

@@ -31,3 +31,7 @@ namespace sharp.common {
 		return _nextId++;
 	}
 }
+
+namespace sharp {
+	export import Vector = Point;
+}

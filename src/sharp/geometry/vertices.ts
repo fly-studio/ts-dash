@@ -36,7 +36,7 @@ namespace sharp {
 				if (p.length > 0)
 				{
 					if (p[0] instanceof Vertex) {
-						this.items = p as Vertex[];
+						this.items = [...p] as Vertex[];
 						return this;
 					} else if (p[0] instanceof Point) {
 						points = p as Point[];

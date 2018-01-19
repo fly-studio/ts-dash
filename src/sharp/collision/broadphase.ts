@@ -1,14 +1,15 @@
 namespace sharp {
 
-	export type TypePairs = [Body, Body, number];
-	export type TypeBucket = Body[];
+	export type TPairs = [Body, Body, number];
+	export type TBucket = Body[];
+	export type TBuckets = Map<string, TBucket>;
 
 	export class Broadphase {
 
 		public engine: Engine;
-		public buckets: Map<string, TypeBucket> = new Map<string, TypeBucket>();
-		public pairs: Map<string, TypePairs> = new Map<string, TypePairs>();
-		public pairsList: TypePairs[] = [];
+		public buckets: TBuckets = new Map<string, TBucket>();
+		public pairs: Map<string, TPairs> = new Map<string, TPairs>();
+		public pairsList: TPairs[] = [];
 		public bucketWidth: number = 48;
 		public bucketHeight: number = 48;
 
@@ -32,15 +33,15 @@ namespace sharp {
 		 */
 		public update(bodies: Body[], forceUpdate: boolean)
 		{
-			let i, col, row,
-				world = this.engine.world,
-				buckets = this.buckets,
-				bucket: TypeBucket|undefined,
+			let i: number, col: number, row: number,
+				world: World = this.engine.world,
+				buckets: TBuckets = this.buckets,
+				bucket: TBucket|undefined,
 				bucketId: string,
-				gridChanged = false;
+				gridChanged: boolean = false;
 
-			let metrics = this.engine.metrics;
-			if (DEBUG)
+			let metrics: Metrics = this.engine.metrics;
+			//if (DEBUG)
 				metrics.broadphaseTests = 0;
 
 			for (i = 0; i < bodies.length; i++) {
@@ -59,7 +60,7 @@ namespace sharp {
 				// if the body has changed grid region
 				if (!body.region || newRegion.id !== body.region.id || forceUpdate) {
 
-					if (DEBUG)
+					//if (DEBUG)
 						metrics.broadphaseTests += 1;
 
 					if (!body.region || forceUpdate)
@@ -246,11 +247,11 @@ namespace sharp {
 		 * @private
 		 * @return [] pairs
 		 */
-		protected _createActivePairsList(): TypePairs[]
+		protected _createActivePairsList(): TPairs[]
 		{
 			let pairKeys: string[],
-				pair: TypePairs|undefined,
-				pairs: TypePairs[] = [];
+				pair: TPairs|undefined,
+				pairs: TPairs[] = [];
 
 			// grid.pairs is used as a hashmap
 			pairKeys = [...this.pairs.keys()];

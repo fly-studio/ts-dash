@@ -102,14 +102,14 @@ namespace sharp.sleeping {
 			body.motion = 0;
 
 			if (!wasSleeping) {
-				events.trigger(body, 'sleepStart');
+				body.trigger('sleepStart');
 			}
 		} else {
 			body.isSleeping = false;
 			body.sleepCounter = 0;
 
 			if (wasSleeping) {
-				events.trigger(body, 'sleepEnd');
+				body.trigger('sleepEnd');
 			}
 		}
 	}

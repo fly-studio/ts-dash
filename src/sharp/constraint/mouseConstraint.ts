@@ -1,39 +1,21 @@
 namespace sharp {
-	export interface MouseConstraintExtraOptions {
-		mouse?: Mouse;
-		element?: any;
-		collisionFilter?: options.CollisionFilterOptions;
-	}
-	export interface MouseConstraintOptions extends options.Options, MouseConstraintExtraOptions {
+
+	export interface MouseConstraintOptions extends ConstraintOptions, options.ICollisionFilterOptions {
 
 	}
-	export class MouseConstraint extends Container {
-		protected options: MouseConstraintOptions;
+
+	export class MouseConstraint extends Constraint {
+		public options: MouseConstraintOptions;
 		public mouse: Mouse;
 		public body: Body | null;
-		public constraint: Constraint;
 
-		constructor(engine: Engine, options: MouseConstraintExtraOptions)
+		constructor(engine: Engine, options: MouseConstraintOptions)
 		{
-			super();
-			let mouse = (engine ? engine.mouse : null) || (options ? options.mouse! : null);
+			let mouse = engine.mouse || new Mouse(engine.element);
 
-			if (!mouse) {
-				if (engine && engine.render && engine.render.canvas) {
-					this.mouse = new Mouse(engine.render.canvas);
-				} else if (options && options.element) {
-					this.mouse = new Mouse(options.element);
-				} else {
-					this.mouse = new Mouse();
-					console.warn('MouseConstraint.create: options.mouse was undefined, options.element was undefined, may not function as expected');
-				}
-			} else
-				this.mouse = mouse;
-
-
-			this.constraint = new Constraint({
+			super(object.extend({
 				label: 'Mouse Constraint',
-				pointA: this.mouse!.position,
+				pointA: mouse.position,
 				pointB: new Point(),
 				length: 0.01,
 				stiffness: 0.1,
@@ -42,9 +24,14 @@ namespace sharp {
 					strokeStyle: 0x90EE90,
 					lineWidth: 3
 				}
-			});
+			}, options));
 
-			this.options = object.extend(this.defaultOptions(), options);
+			this.mouse = mouse;
+			this.options.collisionFilter = object.extend({
+					category: 0x0001,
+					mask: 0xFFFFFFFF,
+					group: 0
+				}, options.collisionFilter);
 
 			engine.on('beforeUpdate', () => {
 				let allBodies = engine.world.allBodies();
@@ -53,28 +40,14 @@ namespace sharp {
 			});
 		}
 
-		/**
-		 * 碰撞参数
-		 *
-		 */
-		public get collisionFilter(): base.CollisionFilterOptions {
+		public get collisionFilter(): options.CollisionFilterOptions
+		{
 			return this.options.collisionFilter!;
 		}
 
-		public set collisionFilter(value: base.CollisionFilterOptions) {
-			this.options.collisionFilter = value;
-		}
-
-		protected defaultOptions(): MouseConstraintOptions
+		public set collisionFilter(value: options.CollisionFilterOptions)
 		{
-			return {
-				type: 'mouseConstraint',
-				collisionFilter: {
-					category: 0x0001,
-					mask: 0xFFFFFFFF,
-					group: 0
-				}
-			};
+			this.options.collisionFilter = value;
 		}
 
 		/**
@@ -86,15 +59,16 @@ namespace sharp {
 		 */
 		public update(bodies: Body[]) {
 			let mouse = this.mouse,
-				constraint = this.constraint,
+				constraint = this,
 				body = this.body;
-
+			// left mouse / touch down
 			if (mouse.button === 0) {
 				if (!constraint.bodyB) {
 					for (let i = 0; i < bodies.length; i++) {
 						body = bodies[i];
+						// check mouse point in this body
 						if (body.bounds.contains(mouse.position)
-							&& detector.canCollide(body.collisionFilter, this.collisionFilter)) {
+							&& Collision.canCollide(body.collisionFilter, this.collisionFilter)) {
 							for (let j = body.parts.length > 1 ? 1 : 0; j < body.parts.length; j++) {
 								let part = body.parts[j];
 								if (part.vertices.contains(mouse.position)) {
@@ -123,7 +97,7 @@ namespace sharp {
 				if (body)
 					this.trigger('enddrag', { mouse: mouse, body: body });
 			}
-		};
+		}
 
 		/**
 		 * Triggers mouse constraint events.
@@ -146,6 +120,6 @@ namespace sharp {
 
 			// reset the mouse state ready for the next step
 			mouse.clearSourceEvents();
-		};
+		}
 	}
 }

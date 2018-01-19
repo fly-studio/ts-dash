@@ -1,13 +1,13 @@
 namespace sharp {
 
-	export interface CompositeExtraOptions {
+	export interface ICompositeExtraOptions {
 		//isModified?: boolean;
 		bodies?: Body[];
 		constraints?: Constraint[];
 		composites?: Composite[];
 	}
 
-	export interface CompositeOptions extends options.Options, CompositeExtraOptions {
+	export interface CompositeOptions extends options.IOptions, ICompositeExtraOptions {
 
 	}
 	/**
@@ -120,12 +120,10 @@ namespace sharp {
 							break;
 						}
 						this.addBody(obj);
-				} else if (obj instanceof Constraint) {
-						this.addConstraint(obj);
-				} else if (obj instanceof Composite) {
-						this.addComposite(obj);
-				} else if (obj instanceof MouseConstraint) {
-						this.addConstraint(obj.constraint);
+				} else if (obj instanceof MouseConstraint || obj instanceof Constraint) {
+					this.addConstraint(obj);
+				}  else if (obj instanceof Composite) {
+					this.addComposite(obj);
 				}
 			}
 
@@ -153,10 +151,8 @@ namespace sharp {
 					this.removeBody(obj, deep);
 				} else if (obj instanceof Constraint) {
 					this.removeConstraint(obj, deep);
-				} else if (obj instanceof Composite) {
+				} else if (obj instanceof Composite || obj instanceof MouseConstraint) {
 					this.removeComposite(obj, deep);
-				} else if (obj instanceof MouseConstraint) {
-					this.removeConstraint(obj.constraint);
 				}
 			}
 
@@ -186,9 +182,9 @@ namespace sharp {
 		 * @param {boolean} [deep=false]
 		 * @return {composite} The original compositeA with the composite removed
 		 */
-		public removeComposite(compositeB: Composite, deep: boolean = false): Composite
+		public removeComposite(compositeB: Composite|MouseConstraint, deep: boolean = false): Composite
 		{
-			let position = this.composites.indexOf(compositeB);
+			let position = this.composites.indexOf(compositeB as Composite);
 			if (position !== -1) {
 				this.removeCompositeAt(position);
 				this.setModified(true, true, false);

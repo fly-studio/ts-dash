@@ -685,5 +685,4 @@ namespace sharp {
 		}
 	}
 
-	export const Vector = Point;
 }

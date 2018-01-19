@@ -1,5 +1,5 @@
 namespace sharp {
-	export interface TimingOptions {
+	export type TimingOptions = {
 		/**
 		 * 时间缩放因子 [1]
 		 * 0 为停止, > 1 为快动作, < 1 为慢动作
@@ -9,7 +9,8 @@ namespace sharp {
 		 * 当前模拟时间，会根据timeScale计算
 		 */
 		timestamp?: number;
-	}
+	};
+
 	export interface EngineExtraOptions {
 		/**
 		 * 允许休眠
@@ -38,8 +39,10 @@ namespace sharp {
 	export interface EngineOptions extends EngineExtraOptions {
 
 	}
+
 	export class Engine extends EventDispatcher {
 		protected options: EngineOptions;
+		public element: HTMLElement;
 		public events: any[] = [];
 		public mouse: Mouse;
 		public world: World;
@@ -55,16 +58,17 @@ namespace sharp {
 		 * @param {object} [options]
 		 * @return {engine} engine
 		 */
-		constructor(options: EngineOptions, world?: World)
+		constructor(element: HTMLElement, options: EngineOptions)
 		{
 			super();
-			this.world = world || new World({});
+			this.element = element;
+			this.world = new World({});
 			this.events = [];
 			this.pairs = new Pairs(this);
 			this.metrics = new Metrics(this, {});
 			this.broadphase = new Broadphase(this);
 
-			if (DEBUG)
+			//if (DEBUG)
 				this.metrics.extended = true;
 
 			let defaults = {
@@ -198,7 +202,7 @@ namespace sharp {
 			}
 
 			// narrowphase pass: find actual collisions, then create or update collision pairs
-			let collisions = broadphase.detector(broadphasePairs, this);
+			let collisions = Collision.getCollisions(broadphasePairs, this);
 
 			// update collision pairs
 			let pairs: Pairs = this.pairs,
@@ -265,8 +269,8 @@ namespace sharp {
 			let broadphase = this.broadphase;
 			if (broadphase) {
 				let bodies = world.allBodies();
-				broadphase.clear(broadphase);
-				broadphase.update(broadphase, bodies, this, true);
+				broadphase.clear();
+				broadphase.update(bodies, true);
 			}
 		}
 	}

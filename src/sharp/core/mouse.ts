@@ -1,9 +1,8 @@
 namespace sharp {
-	import Vector = Point;
 
 	export class Mouse extends EventDispatcher {
 
-		public element: HTMLCanvasElement;
+		public element: HTMLElement;
 		public absolute: Point = new Point;
 		public position: Point = new Point;
 		public mousedownPosition: Point = new Point;
@@ -15,11 +14,11 @@ namespace sharp {
 		public pixelRatio: number;
 		public sourceEvents: any;
 
-		constructor(element?: HTMLCanvasElement)
+		constructor(element?: HTMLElement)
 		{
 			super();
 
-			this.element = element || window.document.body as HTMLCanvasElement;
+			this.element = element || window.document.body as HTMLElement;
 			this.pixelRatio = this.element.getAttribute('data-pixel-ratio') ? parseFloat(this.element.getAttribute('data-pixel-ratio')!) : 1;
 			this.sourceEvents = {
 				mousemove: null,
@@ -94,7 +93,7 @@ namespace sharp {
 		 * @method setElement
 		 * @param {HTMLCanvasElement} element
 		 */
-		public setElement(element: HTMLCanvasElement) {
+		public setElement(element: HTMLElement) {
 			this.element = element;
 
 			element.addEventListener('mousemove', this.onMouseMove);
@@ -158,7 +157,7 @@ namespace sharp {
 		 * @param {number} pixelRatio
 		 * @return {}
 		 */
-		protected _getRelativeMousePosition(event: any, element: HTMLCanvasElement, pixelRatio: number)
+		protected _getRelativeMousePosition(event: any, element: HTMLElement, pixelRatio: number)
 		{
 			var elementBounds = element.getBoundingClientRect(),
 				rootNode = (document.documentElement || document.body.parentNode || document.body),

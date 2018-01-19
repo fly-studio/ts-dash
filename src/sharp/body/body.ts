@@ -1,7 +1,6 @@
 namespace sharp {
-	import Vector = Point;
 
-	export interface BodyExtraOptions {
+	export interface IBodyExtraOptions {
 
 		/**
 		 * 刚性复合体的零件刚体合集
@@ -107,11 +106,6 @@ namespace sharp {
 		 */
 		frictionAir?: number;
 		/**
-		 * 碰撞参数
-		 *
-		 */
-		collisionFilter?: options.CollisionFilterOptions;
-		/**
 		 * 允许两个刚体堆砌重合多少距离，或者是碰撞旋转时允许重合距离 [0.05]
 		 * 除非你足够了解slop引擎的目的，不然使用默认值比较好
 		 * 对于大刚体（复合体），可能需要更大的值来位置堆叠
@@ -125,10 +119,10 @@ namespace sharp {
 		/**
 		 * 渲染参数
 		 */
-		render?: options.RenderOptions;
+		render?: options.TRender;
 	}
 
-	export interface BodyOptions extends options.Options, BodyExtraOptions {
+	export interface BodyOptions extends options.IOptions, IBodyExtraOptions, options.ICollisionFilterOptions {
 
 	}
 	/**
@@ -654,11 +648,11 @@ namespace sharp {
 		 * 碰撞参数
 		 *
 		 */
-		public get collisionFilter(): options.CollisionFilterOptions {
+		public get collisionFilter(): options.TCollisionFilter {
 			return this.options.collisionFilter!;
 		}
 
-		public set collisionFilter(value: options.CollisionFilterOptions) {
+		public set collisionFilter(value: options.TCollisionFilter) {
 			this.options.collisionFilter = value;
 		}
 
