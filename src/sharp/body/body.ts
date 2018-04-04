@@ -1,3 +1,5 @@
+/// <reference path="../common/container.ts" />
+
 namespace sharp {
 
 	export interface IBodyExtraOptions {
@@ -186,7 +188,7 @@ namespace sharp {
 		/**
 		 * 移动量的组合(speed和angularSpeed) [0]
 		 */
-		protected _motion: number;
+		protected _motion: number = 0;
 
 		public _original: any;
 		public sleepCounter: number = 0;
