@@ -25,7 +25,7 @@ namespace sharp {
 		 * @param {collision[]} collisions
 		 * @param {number} timestamp
 		 */
-		public update(collisions: Collision[], timestamp: number): Pairs
+		public update(collisions: Collision[], timestamp: number): this
 		{
 			var pairsList = this.list,
 				pairsTable = this.table,
@@ -92,7 +92,7 @@ namespace sharp {
 		 * @method removeOld
 		 * @param {number} timestamp
 		 */
-		public removeOld(timestamp: number): Pairs
+		public removeOld(timestamp: number): this
 		{
 			var pairsList = this.list,
 				pairsTable = this.table,
@@ -134,7 +134,7 @@ namespace sharp {
 		 * @param {pairs} pairs
 		 * @return {pairs} pairs
 		 */
-		public clear(): Pairs
+		public clear(): this
 		{
 			this.table.clear();
 			this.list.length = 0;

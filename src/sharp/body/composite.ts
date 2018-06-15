@@ -37,11 +37,11 @@ namespace sharp {
 		/**
 		 * 父级刚体
 		 */
-		public get parent(): Composite {
+		public get parent(): this {
 			return this.options.parent!;
 		}
 
-		public set parent(value: Composite) {
+		public set parent(value: this) {
 			this.options.parent = value;
 		}
 
@@ -82,7 +82,7 @@ namespace sharp {
 		 * @param {boolean} [updateParents=false]
 		 * @param {boolean} [updateChildren=false]
 		 */
-		public setModified(isModified: boolean, updateParents: boolean = false, updateChildren: boolean = false): Composite
+		public setModified(isModified: boolean, updateParents: boolean = false, updateChildren: boolean = false): this
 		{
 			this._isModified = isModified;
 
@@ -106,7 +106,8 @@ namespace sharp {
 		 * @param {} object
 		 * @return {composite} The original composite with the objects added
 		 */
-		public add(...args: any[]) {
+		public add(...args: any[]): this
+		{
 
 			this.trigger('beforeAdd', { object: args });
 
@@ -141,7 +142,8 @@ namespace sharp {
 		 * @param {boolean} [deep=false]
 		 * @return {composite} The original composite with the objects removed
 		 */
-		public remove(args: any[], deep: boolean = false) {
+		public remove(args: any[], deep: boolean = false): this
+		{
 			this.trigger('beforeRemove', { object: object });
 
 			for (let i = 0; i < args.length; i++) {
@@ -167,7 +169,7 @@ namespace sharp {
 		 * @method addCompositeAB
 		 * @return {composite} The original compositeA with the objects from compositeB added
 		 */
-		public addComposite(compositeB: Composite): Composite
+		public addComposite(compositeB: Composite): this
 		{
 			this.composites.push(compositeB);
 			compositeB.parent = this;
@@ -182,7 +184,7 @@ namespace sharp {
 		 * @param {boolean} [deep=false]
 		 * @return {composite} The original compositeA with the composite removed
 		 */
-		public removeComposite(compositeB: Composite|MouseConstraint, deep: boolean = false): Composite
+		public removeComposite(compositeB: Composite|MouseConstraint, deep: boolean = false): this
 		{
 			let position = this.composites.indexOf(compositeB as Composite);
 			if (position !== -1) {
@@ -206,7 +208,7 @@ namespace sharp {
 		 * @param {number} position
 		 * @return {composite} The original composite with the composite removed
 		 */
-		public removeCompositeAt(position: number): Composite
+		public removeCompositeAt(position: number): this
 		{
 			this.composites.splice(position, 1);
 			this.setModified(true, true, false);
@@ -220,7 +222,7 @@ namespace sharp {
 		 * @param {body} body
 		 * @return {composite} The original composite with the body added
 		 */
-		public addBody(body: Body): Composite
+		public addBody(body: Body): this
 		{
 			this.bodies.push(body);
 			this.setModified(true, true, false);
@@ -235,7 +237,8 @@ namespace sharp {
 		 * @param {boolean} [deep=false]
 		 * @return {composite} The original composite with the body removed
 		 */
-		public removeBody(body: Body, deep: boolean = false) {
+		public removeBody(body: Body, deep: boolean = false): this
+		{
 			let position = this.bodies.indexOf(body);
 			if (position !== -1) {
 				this.removeBodyAt(position);
@@ -258,7 +261,7 @@ namespace sharp {
 		 * @param {number} position
 		 * @return {composite} The original composite with the body removed
 		 */
-		public removeBodyAt(position: number): Composite
+		public removeBodyAt(position: number): this
 		{
 			this.bodies.splice(position, 1);
 			this.setModified(true, true, false);
@@ -272,7 +275,7 @@ namespace sharp {
 		 * @param {constraint} constraint
 		 * @return {composite} The original composite with the constraint added
 		 */
-		public addConstraint(constraint: Constraint): Composite
+		public addConstraint(constraint: Constraint): this
 		{
 			this.constraints.push(constraint);
 			this.setModified(true, true, false);
@@ -287,7 +290,8 @@ namespace sharp {
 		 * @param {boolean} [deep=false]
 		 * @return {composite} The original composite with the constraint removed
 		 */
-		public removeConstraint(constraint: Constraint, deep: boolean = false): Composite {
+		public removeConstraint(constraint: Constraint, deep: boolean = false): this
+		{
 			let position = this.constraints.indexOf(constraint);
 			if (position !== -1) {
 				this.removeConstraintAt(position);
@@ -309,7 +313,7 @@ namespace sharp {
 		 * @param {number} position
 		 * @return {composite} The original composite with the constraint removed
 		 */
-		public removeConstraintAt(position: number): Composite
+		public removeConstraintAt(position: number): this
 		{
 			this.constraints.splice(position, 1);
 			this.setModified(true, true, false);
@@ -323,7 +327,7 @@ namespace sharp {
 		 * @param {boolean} keepStatic
 		 * @param {boolean} [deep=false]
 		 */
-		public clear(keepStatic: boolean, deep: boolean = false): Composite
+		public clear(keepStatic: boolean, deep: boolean = false): this
 		{
 			if (deep) {
 				for (let i = 0; i < this.composites.length; i++) {
@@ -431,7 +435,7 @@ namespace sharp {
 		 * @param {compositeB} compositeB
 		 * @return {composite} Returns compositeA
 		 */
-		public move(objects: any[], compositeB: Composite): Composite
+		public move(objects: any[], compositeB: Composite): this
 		{
 			this.remove(objects);
 			compositeB.add(objects);
@@ -443,7 +447,7 @@ namespace sharp {
 		 * @method rebase
 		 * @return {composite} Returns composite
 		 */
-		public rebase(): Composite
+		public rebase(): this
 		{
 			let objects: any[] = ([] as any[]).concat(this.allBodies())
 				.concat(this.allConstraints())
@@ -465,7 +469,7 @@ namespace sharp {
 		 * @param {vector} translation
 		 * @param {bool} [recursive=true]
 		 */
-		public translate(translation: Point, recursive: boolean = true) : Composite
+		public translate(translation: Point, recursive: boolean = true): this
 		{
 			let bodies = recursive ? this.allBodies() : this.bodies;
 
@@ -485,7 +489,7 @@ namespace sharp {
 		 * @param {vector} point
 		 * @param {bool} [recursive=true]
 		 */
-		public rotate(rotation: number, point: Point, recursive: boolean = true): Composite
+		public rotate(rotation: number, point: Point, recursive: boolean = true): this
 		{
 			let cos = Math.cos(rotation),
 				sin = Math.sin(rotation),
@@ -517,7 +521,7 @@ namespace sharp {
 		 * @param {vector} point
 		 * @param {bool} [recursive=true]
 		 */
-		public scale(scaleX: number, scaleY: number, point: Point, recursive: boolean = false): Composite
+		public scale(scaleX: number, scaleY: number, point: Point, recursive: boolean = false): this
 		{
 			let bodies = recursive ? this.allBodies() : this.bodies;
 
@@ -549,7 +553,7 @@ namespace sharp {
 		 * @param {object} options
 		 * @return {composite} A new composite containing objects chained together with constraints
 		 */
-		public setChain(xOffsetA: number, yOffsetA: number, xOffsetB: number, yOffsetB: number, options: any): Composite
+		public setChain(xOffsetA: number, yOffsetA: number, xOffsetB: number, yOffsetB: number, options: any): this
 		{
 			let bodies = this.bodies;
 
@@ -587,7 +591,7 @@ namespace sharp {
 		 * @param {object} options
 		 * @return {composite} The composite containing objects meshed together with constraints
 		 */
-		public setMesh(columns: number, rows: number, crossBrace: boolean, options: any): Composite
+		public setMesh(columns: number, rows: number, crossBrace: boolean, options: any): this
 		{
 			let bodies = this.bodies,
 				row: number,

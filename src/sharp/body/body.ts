@@ -211,11 +211,11 @@ namespace sharp {
 		/**
 		 * 父级刚体，如果不是复合体，则parent等于自己
 		 */
-		public get parent(): Body {
-			return this.options.parent!;
+		public get parent(): this {
+			return this.options.parent;
 		}
 
-		public set parent(value: Body) {
+		public set parent(value: this) {
 			this.options.parent = value;
 		}
 
@@ -686,11 +686,11 @@ namespace sharp {
 		/**
 		 * 渲染参数
 		 */
-		public get render(): options.RenderOptions {
+		public get render(): options.TRender {
 			return this.options.render!;
 		}
 
-		public set render(value: options.RenderOptions) {
+		public set render(value: options.TRender) {
 			this.options.render = value;
 		}
 
@@ -877,7 +877,7 @@ namespace sharp {
 		 * @method setStatic
 		 * @param {bool} isStatic
 		 */
-		public setStatic(isStatic: boolean): Body
+		public setStatic(isStatic: boolean): this
 		{
 			for (let i = 0; i < this.parts.length; i++) {
 				let part = this.parts[i];
@@ -926,7 +926,7 @@ namespace sharp {
 		 * @method setMass
 		 * @param {number} mass
 		 */
-		public setMass(mass: number): Body
+		public setMass(mass: number): this
 		{
 			let moment = this.inertia / (this.mass / 6);
 			this.inertia = moment * (mass / 6);
@@ -943,7 +943,7 @@ namespace sharp {
 		 * @method setDensity
 		 * @param {number} density
 		 */
-		public setDensity(density: number): Body
+		public setDensity(density: number): this
 		{
 			this.setMass(density * this.area);
 			this.density = density;
@@ -956,7 +956,7 @@ namespace sharp {
 		 * @method setInertia
 		 * @param {number} inertia
 		 */
-		public setInertia(inertia: number): Body
+		public setInertia(inertia: number): this
 		{
 			this.inertia = inertia;
 			this.inverseInertia = 1 / this.inertia;
@@ -974,7 +974,7 @@ namespace sharp {
 		 * @method setVertices
 		 * @param {vector[]} vertices
 		 */
-		public setVertices(vertices: Vertices): Body
+		public setVertices(vertices: Vertices): this
 		{
 			// change vertices
 			if (vertices.body === this) {
@@ -1011,7 +1011,7 @@ namespace sharp {
 		 * @param [body] parts
 		 * @param {bool} [autoHull=true]
 		 */
-		public setParts(parts: Body[], autoHull: boolean = true): Body
+		public setParts(parts: Body[], autoHull: boolean = true): this
 		{
 			let i: number;
 
@@ -1071,7 +1071,7 @@ namespace sharp {
 		 * @method setPosition
 		 * @param {vector} position
 		 */
-		public setPosition(position: Point): Body
+		public setPosition(position: Point): this
 		{
 			let delta = position.clone().subtract(this.position.x, this.position.y);
 			this.positionPrev.x += delta.x;
@@ -1092,7 +1092,7 @@ namespace sharp {
 		 * @method setAngle
 		 * @param {number} angle
 		 */
-		public setAngle(angle: number): Body
+		public setAngle(angle: number): this
 		{
 			let delta = angle - this.angle;
 			this.anglePrev += delta;
@@ -1115,7 +1115,7 @@ namespace sharp {
 		 * @method set
 		 * @param {boolean} isSleeping
 		 */
-		public setSleeping(isSleeping: boolean): Body
+		public setSleeping(isSleeping: boolean): this
 		{
 			sleeping.set(this, isSleeping);
 			return this;
@@ -1126,7 +1126,7 @@ namespace sharp {
 		 * @method setVelocity
 		 * @param {vector} velocity
 		 */
-		public setVelocity(velocity: Vector): Body
+		public setVelocity(velocity: Vector): this
 		{
 			this.positionPrev.x = this.position.x - velocity.x;
 			this.positionPrev.y = this.position.y - velocity.y;
@@ -1141,7 +1141,7 @@ namespace sharp {
 		 * @method setAngularVelocity
 		 * @param {number} velocity
 		 */
-		public setAngularVelocity(velocity: number): Body
+		public setAngularVelocity(velocity: number): this
 		{
 			this.anglePrev = this.angle - velocity;
 			this.angularVelocity = velocity;
@@ -1154,7 +1154,7 @@ namespace sharp {
 		 * @method translate
 		 * @param {vector} translation
 		 */
-		public translate(translation: Vector): Body
+		public translate(translation: Vector): this
 		{
 			this.setPosition(this.position.clone().add(translation.x, translation.y));
 			return this;
@@ -1166,7 +1166,7 @@ namespace sharp {
 		 * @param {number} rotation
 		 * @param {vector} [point]
 		 */
-		public rotate(rotation: number, point?: Point): Body
+		public rotate(rotation: number, point?: Point): this
 		{
 			if (point == undefined) {
 				this.setAngle(this.angle + rotation);
@@ -1193,7 +1193,7 @@ namespace sharp {
 		 * @param {number} scaleY
 		 * @param {vector} [point]
 		 */
-		public scale(scaleX: number, scaleY: number, point?: Point): Body
+		public scale(scaleX: number, scaleY: number, point?: Point): this
 		{
 			let totalArea = 0,
 				totalInertia = 0;
@@ -1260,7 +1260,7 @@ namespace sharp {
 		 * @param {number} timeScale
 		 * @param {number} correction
 		 */
-		public update(deltaTime: number, timeScale: number, correction: number): Body
+		public update(deltaTime: number, timeScale: number, correction: number): this
 		{
 			let deltaTimeSquared = Math.pow(deltaTime * timeScale * this.timeScale, 2);
 
@@ -1318,7 +1318,7 @@ namespace sharp {
 		 * @param {vector} position
 		 * @param {vector} force
 		 */
-		public applyForce(position: Point, force: Vector): Body
+		public applyForce(position: Point, force: Vector): this
 		{
 			this.force.x += force.x;
 			this.force.y += force.y;
